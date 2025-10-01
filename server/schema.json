@@ -4,7 +4,9 @@
 		"id",
 		"owner",
 		"members",
-		"name",
-		
-	]
+		"name"
+	],
+	"properties": {
+		"id": "id"
+	}
 }
