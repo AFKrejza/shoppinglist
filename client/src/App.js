@@ -130,7 +130,17 @@ function App() {
   function DisplayShoppingList({ shoppingList }) {
     const listItems = shoppingList.itemList.map((item) => (
       <li key={item.id}>
-        {item.name} - {item.quantity} {item.unit} {item.ticked}
+        {item.name} - {item.quantity} {item.unit} {item.ticked} <button onClick={() => {
+			item.ticked = true;
+			const updatedShoppingList = {
+				...shoppingList,
+				itemList: shoppingList.itemList.filter((items) => items !== item)
+			};
+
+			setActiveShoppingList(updatedShoppingList);
+			const updatedListList = [...shoppingListList.filter((list) => list.id !== shoppingList.id), updatedShoppingList];
+			setShoppingListList(updatedListList);
+			}}>Remove</button>
       </li>
     ));
 	const listMemberIds = new Set(shoppingList.memberList);
