@@ -157,7 +157,7 @@ function App() {
       <button
         onClick={() => {
           setActiveUser(user);
-		  setActiveShoppingList(null);
+          setActiveShoppingList(null);
           console.log(user.id);
         }}
       >
@@ -169,10 +169,15 @@ function App() {
 
   return (
     <div className="App">
-      <ul>{listUsers}</ul>
+      <div>{!activeUser && listUsers}</div>
+      <div>
+        {activeUser && (
+          <button onClick={() => setActiveUser(null)}>Log out</button>
+        )}
+      </div>
       <div>{activeUser && <DisplayUserShoppingLists user={activeUser} />}</div>
       <div>
-        {activeShoppingList && (
+        {activeShoppingList && activeUser && (
           <DisplayShoppingList shoppingList={activeShoppingList} />
         )}
       </div>
