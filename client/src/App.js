@@ -121,8 +121,11 @@ function App() {
     },
   ];
 
+  // apologies for not finishing everything, I forgot to scroll down to the Evaluation Rules
+
   const [activeUser, setActiveUser] = useState(null);
   const [activeShoppingList, setActiveShoppingList] = useState(null);
+  const [activeShoppingListList, setShoppingListList] = useState(shoppingListList);
 
   function DisplayShoppingList({ shoppingList }) {
     const listItems = shoppingList.itemList.map((item) => (
@@ -136,6 +139,18 @@ function App() {
 	);
 	listMembers = listMembers.map((user) => (
 		<li key={user.id}>
+			<button onClick={() => {
+				if (activeUser.id === activeShoppingList.ownerId || activeUser.id === user.id) {
+					const updatedList = {
+						...shoppingList,
+						memberList: shoppingList.memberList.filter((id) => id !== user.id)
+					};
+					setActiveShoppingList(updatedList);
+
+					const updatedListList = [...shoppingListList.filter((list) => list.id !== shoppingList.id), updatedList];
+					setShoppingListList(updatedListList);
+				}
+			}}>Remove</button>
 			{user.name}
 		</li>
 	));
@@ -143,8 +158,8 @@ function App() {
   }
 
   function DisplayUserShoppingLists({ user }) {
-    let shoppingLists = shoppingListList.filter(
-      (shoppingList) => shoppingList.ownerId == user.id
+    let shoppingLists = activeShoppingListList.filter(
+      (shoppingList) => shoppingList.ownerId === user.id
     );
     shoppingLists = shoppingLists.map((shoppingList) => (
       <li key={shoppingList.id}>
