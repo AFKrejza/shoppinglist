@@ -27,7 +27,7 @@ function App() {
       ownerId: 1,
       name: "Groceries",
       isArchived: false,
-      memberList: [1],
+      memberList: [1,2,3],
       itemList: [
         {
           id: 1,
@@ -64,7 +64,7 @@ function App() {
       ownerId: 2,
       name: "Plants",
       isArchived: false,
-      memberList: [1],
+      memberList: [2],
       itemList: [
         {
           id: 1,
@@ -94,7 +94,7 @@ function App() {
       ownerId: 1,
       name: "Plants",
       isArchived: false,
-      memberList: [1],
+      memberList: [1,3],
       itemList: [
         {
           id: 1,
@@ -130,7 +130,16 @@ function App() {
         {item.name} - {item.quantity} {item.unit} {item.ticked}
       </li>
     ));
-    return listItems;
+	const listMemberIds = new Set(shoppingList.memberList);
+	let listMembers = userList.filter(
+		(user) => listMemberIds.has(user.id)
+	);
+	listMembers = listMembers.map((user) => (
+		<li key={user.id}>
+			{user.name}
+		</li>
+	));
+    return [listItems, listMembers];
   }
 
   function DisplayUserShoppingLists({ user }) {
