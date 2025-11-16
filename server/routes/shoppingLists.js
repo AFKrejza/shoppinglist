@@ -8,6 +8,9 @@ shoppingListRouter.get("/:id", (req, res) => {
 	const authorized = authorizeMember(req.headers.authorization);
 })
 
+// the rest of the routes will follow a similar pattern.
+// The main difference will be in which model is used and 
+// what properties are required.
 shoppingListRouter.put("/", async (req, res) => {
 	try {
 		const { ownerId, name } = req.body;
@@ -32,12 +35,12 @@ shoppingListRouter.put("/", async (req, res) => {
 // the items array will be updated here
 // because they're part of the shopping list document
 shoppingListRouter.patch("/:id", (req, res) => {
-
+	const authorized = authorizeMember(req.headers.authorization);
 })
 
 
 shoppingListRouter.delete("/:id", (req, res) => {
-
+	const authorized = authorizeMember(req.headers.authorization);
 })
 
 export {

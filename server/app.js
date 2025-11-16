@@ -18,7 +18,7 @@ app.use("/users", userRouter);
 
 // this one works
 app.post("/login", (req, res) => {
-	// req.body = { userName: "John", password: "password" };
+	// example req.body = { userName: "John", password: "password" };
 	const token = authenticateUser(req.body);
 	res.status(200).send(token);
 })

@@ -7,6 +7,9 @@ userRouter.get("/:id", (req, res) => {
 
 })
 
+// the rest of the routes will follow a similar pattern.
+// The main difference will be in which model is used and 
+// what properties are required.
 userRouter.put("/", async (req, res) => {
 	try {
 		const { userName, email } = req.body;
