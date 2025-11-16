@@ -42,12 +42,12 @@ itemSchemas.createIn = new mongoose.Schema({
 	},
 });
 
-const newShoppingList = mongoose.model('ShoppingList', shoppingListSchemas.createIn);
-const newUser = mongoose.model('User', userSchemas.createIn);
-const newItem = mongoose.model('Item', itemSchemas.createIn);
+const ShoppingList = mongoose.model('ShoppingList', shoppingListSchemas.createIn);
+const User = mongoose.model('User', userSchemas.createIn);
+const Item = mongoose.model('Item', itemSchemas.createIn);
 
 export {
-	newShoppingList,
-	newUser,
-	newItem,
+	ShoppingList,
+	User,
+	Item,
 }

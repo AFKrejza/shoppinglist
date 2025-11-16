@@ -1,7 +1,5 @@
 import express from "express";
-import validate from "../middleware/validate.js";
 import { authenticateUser, decodeUser } from "../middleware/auth.js";
-import { newUser } from "../middleware/schemas/models.js";
 
 const userRouter = express.Router();
 
@@ -9,12 +7,24 @@ userRouter.get("/:id", (req, res) => {
 
 })
 
-// validate it too!
-userRouter.put("/", (req, res) => {
-	const isValid = validate(req.body);
-	if (!isValid) throw new Error("Validation failed"); // figure out how mongoose returns schema errors
-	// add stuff
-	return req.body;
+userRouter.put("/", async (req, res) => {
+	try {
+		const { userName, email } = req.body;
+		const user = new User({
+			userName: userName,
+			email: email
+		});
+		console.log(user);
+		await user.validate();
+	} catch (error) {
+		if (error.name === "ValidationError") {
+			const messages = Object.values(error.errors).map(err => err.message);
+			console.log(error);
+			return res.status(400).json({ errors: messages });
+		}
+		console.log(error);
+		res.error(500).send(error);
+	}
 })
 
 // used to authenticate. Returns a JWT

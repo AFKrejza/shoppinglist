@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import express from "express";
 import dotenv from "dotenv";
 
-import { newItem, newShoppingList, newUser } from "./middleware/schemas/models.js";
 import { shoppingListRouter } from "./routes/shoppingLists.js";
 import { userRouter } from "./routes/users.js";
 import { authenticateUser } from "./middleware/auth.js";
