@@ -1,11 +1,12 @@
 import express from "express";
 import validate from "../middleware/validate.js";
-import { authenticateUser, authorizeUser } from "../middleware/auth.js";
+import { authenticateUser, decodeUser } from "../middleware/auth.js";
+import { newUser } from "../middleware/schemas/models.js";
 
 const userRouter = express.Router();
 
 userRouter.get("/:id", (req, res) => {
-	const user = {};
+
 })
 
 // validate it too!
@@ -16,9 +17,20 @@ userRouter.put("/", (req, res) => {
 	return req.body;
 })
 
-userRouter.delete("/", (req, res) => {
-	const authorized = authorizeUser(req.body, req.headers.authorization);
-	
+// used to authenticate. Returns a JWT
+userRouter.post("/login", (req, res) => {
+	const token = authenticateUser(req.body);
+	return token;
+})
+
+
+userRouter.patch("/:id", (req, res) => {
+
+})
+
+userRouter.delete("/:id", (req, res) => {
+	const decoded = decodeUser(req.headers.authorization);
+
 })
 
 export {

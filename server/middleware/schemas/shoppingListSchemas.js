@@ -1,73 +1,108 @@
+import mongoose from "mongoose";
+
 // check db/models for base schemas
 
-// shoppingList
-const createIn = {
-	ownerId: Number,
-	name: String,
+const OWNERID = {
+	type: Number,
+	required: true,
 };
+
+const NAME = {
+	type: String,
+	required: true
+};
+
+const ID = {
+	type: Number,
+	required: true
+};
+
+const MEMBERLIST = {
+	type: Array,
+	required: true
+};
+
+const ITEMLIST = {
+	type: Array,
+	required: true
+};
+
+const ISARCHIVED = {
+	type: Boolean,
+	required: true
+};
+
+
+
+const createIn = new mongoose.Schema({
+	ownerId: OWNERID,
+	name: NAME,
+});
+
+const getIn = new mongoose.Schema({
+	id: ID
+});
+
+const updateIn = new mongoose.Schema({
+	id: ID,
+	ownerId: OWNERID,
+	name: NAME,
+	memberList: MEMBERLIST,
+	itemList: ITEMLIST,
+	isArchived: ISARCHIVED,
+});
+
+const deleteIn = new mongoose.Schema({
+	id: ID
+});
+
+
 
 const createOut = {
-	id: Number,
-	ownerId: Number,
-	name: String,
-	memberList: Array,
-	itemList: Array,
-	isArchived: Boolean,
-};
-
-const getIn = {
-	id: Number
+	id: ID,
+	ownerId: OWNERID,
+	name: NAME,
+	memberList: MEMBERLIST,
+	itemList: ITEMLIST,
+	isArchived: ISARCHIVED,
 };
 
 const getOut = {
-	id: Number,
-	ownerId: Number,
-	name: String,
-	memberList: Array,
-	itemList: Array,
-	isArchived: Boolean,
-};
-
-const updateIn = {
-	id: Number,
-	ownerId: Number,
-	name: String,
-	memberList: Array,
-	itemList: Array,
-	isArchived: Boolean,
+	id: ID,
+	ownerId: OWNERID,
+	name: NAME,
+	memberList: MEMBERLIST,
+	itemList: ITEMLIST,
+	isArchived: ISARCHIVED,
 };
 
 const updateOut = {
-	id: Number,
-	ownerId: Number,
-	name: String,
-	memberList: Array,
-	itemList: Array,
-	isArchived: Boolean,
-};
-
-const deleteIn = {
-	id: Number
+	id: ID,
+	ownerId: OWNERID,
+	name: NAME,
+	memberList: MEMBERLIST,
+	itemList: ITEMLIST,
+	isArchived: ISARCHIVED,
 };
 
 // using findOneAndDelete
 // to return the deleted list
 const deleteOut = {
-	id: Number,
-	ownerId: Number,
-	name: String,
-	memberList: Array,
-	itemList: Array,
-	isArchived: Boolean,
+	id: ID,
+	ownerId: OWNERID,
+	name: NAME,
+	memberList: MEMBERLIST,
+	itemList: ITEMLIST,
+	isArchived: ISARCHIVED,
 };
 
 export default {
 	createIn,
-	createOut,
 	getIn,
-	getOut,
 	updateIn,
-	updateOut,
 	deleteIn,
+	createOut,
+	getOut,
+	updateOut,
 	deleteOut
 }

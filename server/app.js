@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 import express from "express";
 import dotenv from "dotenv";
 
-import { User, ShoppingList, Item } from "./db/models.js";
+import { newItem, newShoppingList, newUser } from "./middleware/schemas/models.js";
 import { shoppingListRouter } from "./routes/shoppingLists.js";
 import { userRouter } from "./routes/users.js";
-import { authenticateUser, authorizeUser } from "./middleware/auth.js";
+import { authenticateUser } from "./middleware/auth.js";
 
 dotenv.config();
 
@@ -17,9 +17,10 @@ const secret = process.env.JWT_SECRET;
 app.use("/shoppinglists", shoppingListRouter);
 app.use("/users", userRouter);
 
+// this one works
 app.post("/login", (req, res) => {
-	req.body = { userName: "John", password: "password" };
-	const token = authenticateUser(req);
+	// req.body = { userName: "John", password: "password" };
+	const token = authenticateUser(req.body);
 	res.status(200).send(token);
 })
 

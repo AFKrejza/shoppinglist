@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
+import jwt, { decode } from "jsonwebtoken";
 
 // just have it return a JWT with the user's info
 /*
@@ -9,7 +9,6 @@ input: {
 	"password": "12345"
 }
 if verified, create JWT out of the user's id, username, and the secret in .env
-
 */
 
 dotenv.config();
@@ -20,23 +19,38 @@ const secret = process.env.JWT_SECRET;
 // this function just assumes that the user exists and that the username and password are correct
 // for testing purposes, it will always return a valid JWT
 function authenticateUser(user) {
-	const payload = { userId: 1 };
-	const token = jwt.sign(payload, secret); // TODO: check options such as token expiration
+	const token = jwt.sign(user.userName, secret); // TODO: check options such as token expiration
 	return token;
 }
 
 // TODO: add expiration, then ensure iat, exp, nbf are all correct
-function authorizeUser(user, token) {
-	const decoded = jwt.verify(token, secret);
-	// TODO: decoded.userId: check the db AND check the req.body
-	if (user.userId !== decoded.userId) {
-		throw new Error("authorization failure");
+// check if user is a member or owner of a shopping list
+function authorizeOwner(decodedUser, shoppingList) {
+	if (decodedUser.userId === shoppingList.ownerId) {
+		return true;
 	}
-	console.log(decoded);
-	return true;
+	else return false;
+}
+
+function authorizeMember(decodedUser, shoppingList) {
+	if (authorizeOwner(decodedUser, shoppingList)) return true;
+	return shoppingList.memberList.includes(decodedUser.userId);
+}
+
+function decodeUser(token) {
+	// TODO: decoded.userId: check the db AND check the req.body
+	try {
+		const decoded = jwt.verify(token, secret);
+		console.log(decoded);
+		return decoded;
+	} catch {
+		throw new Error("Invalid token");
+	}
 }
 
 export {
 	authenticateUser,
-	authorizeUser
+	authorizeOwner,
+	authorizeMember,
+	decodeUser
 }
