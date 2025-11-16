@@ -1,42 +1,32 @@
-import express from "express";
 import mongoose from "mongoose";
+import express from "express";
+import dotenv from "dotenv";
+
 import { User, ShoppingList, Item } from "./db/models.js";
+import { shoppingListRouter } from "./routes/shoppingLists.js";
+import { userRouter } from "./routes/users.js";
+import { authenticateUser, authorizeUser } from "./middleware/auth.js";
 
-// main().catch(err => console.error(err));
+dotenv.config();
 
+const app = express();
+app.use(express.json());
+const port = process.env.SERVER_PORT;
+const secret = process.env.JWT_SECRET;
 
-const JohnDoe = new User({
-	name: "John Doe",
-	email: "john.doe@gmail.com"
-});
+app.use("/shoppinglists", shoppingListRouter);
+app.use("/users", userRouter);
 
-const List1 = new ShoppingList({
-	ownerId: 1,
-	name: "List 1",
-	memberList: [],
-	itemList: [
-		new Item({
-			name: "apples",
-			quantity: 6,
-			unit: "",
-			ticked: false,
-		}),
-		new Item({
-			name: "milk",
-			quantity: 2,
-			unit: "l",
-			ticked: false,
-		}),
-	],
-	isArchived: false
-});
+app.post("/login", (req, res) => {
+	req.body = { userName: "John", password: "password" };
+	const token = authenticateUser(req);
+	res.status(200).send(token);
+})
 
-console.log(`${JohnDoe}\n${List1}`);
-
+app.listen(port, () => {
+	console.log(`Server running on port ${port}`);
+})
 
 // async function main() {
-// 	// await mongoose.connect('mongodb:/127.0.0.1:27017/test');
-	
+//  	await mongoose.connect('mongodb:/127.0.0.1:27017/test');
 // }
-
-// main();
