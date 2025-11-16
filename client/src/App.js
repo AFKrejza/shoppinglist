@@ -2,8 +2,6 @@ import "./App.css";
 import { useState } from "react";
 import { Card, Row, Col, Modal, Button, Form } from "react-bootstrap";
 
-
-
 function App() {
   // sample data
   const userList = [
@@ -67,7 +65,7 @@ function App() {
       ownerId: 2,
       name: "Plants",
       isArchived: false,
-      memberList: [2],
+      memberList: [3],
       itemList: [
         {
           id: 1,
@@ -208,25 +206,6 @@ function App() {
     return [listItems, listMembers];
   }
 
-  function DisplayUserShoppingLists({ user }) {
-    let shoppingLists = activeShoppingListList.filter(
-      (shoppingList) => shoppingList.ownerId === user.id
-    );
-    shoppingLists = shoppingLists.map((shoppingList) => (
-      <li key={shoppingList.id}>
-        <button
-          onClick={() => {
-            setActiveShoppingList(shoppingList);
-            console.log(`shopping list id: ${shoppingList.id}`);
-          }}
-        >
-          {shoppingList.name}
-        </button>
-      </li>
-    ));
-    return shoppingLists;
-  }
-
   const listUsers = userList.map((user) => (
     <li key={user.id}>
       <button
@@ -316,8 +295,11 @@ function CreateList({ onClick }) {
         )}
       </div>
       <div>{activeUser && <ShoppingListTiles
-	 	shoppingLists={activeShoppingListList.filter(
-			(shoppingList) => shoppingList.ownerId === activeUser.id
+	 	shoppingLists={activeShoppingListList
+		.filter(
+			(shoppingList) =>
+				shoppingList.ownerId === activeUser.id ||
+			shoppingList.memberList.includes(activeUser.id)
 		)
 		.filter(shoppingList => showArchived ? true : !shoppingList.isArchived)	
 	}
