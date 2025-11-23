@@ -10,7 +10,7 @@ const auth = (req, res, next) => {
 
 	try {
 		const decoded = verifyToken(token);
-		req.user = decoded;
+		req.user = decoded;					// note: this is the only true source of user credentials. Don't use req.body for authentication!
 		next();
 	} catch (err) {
 		res.status(401).json({ message: "Invalid or expired token" });

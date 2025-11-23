@@ -1,5 +1,5 @@
 import express from "express";
-// import { authorizeOwner, authorizeMember } from "../middleware/auth.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 import { ShoppingList } from "../models/Shoppinglist.js";
 
 const shoppingListRouter = express.Router();
@@ -11,9 +11,9 @@ shoppingListRouter.get("/:id", (req, res) => {
 // the rest of the routes will follow a similar pattern.
 // The main difference will be in which model is used and 
 // what properties are required.
-shoppingListRouter.put("/", async (req, res) => {
+shoppingListRouter.put("/", authMiddleware, async (req, res) => {
 	try {
-		const { ownerId, name } = req.body;
+		const { ownerId, name } = req.user;
 		const shoppingList = new ShoppingList({
 			ownerId: ownerId,
 			name: name

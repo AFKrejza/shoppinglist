@@ -1,0 +1,41 @@
+@URL = http://localhost:3000
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5MTQ5MTUsImV4cCI6MTc2MzkyMjExNX0.9qf6mDXbWVhC7kEc_XQVlIE-kegk7kwKKJ83qbIPsQg
+@project_id = 1
+
+###
+GET {{URL}}/projects/{{project_id}} HTTP/1.1
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+	
+}
+
+###
+PUT {{URL}}/projects HTTP/1.1
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+	"name": "Another shopping list"
+}
+
+###
+PATCH {{URL}}/projects/{{project_id}} HTTP/1.1
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+
+}
+
+###
+DELETE {{URL}}/projects/{{project_id}} HTTP/1.1
+Authorization: Bearer {{JWT}}
+Content-Type: application/json
+
+{
+	
+}
+
+###
