@@ -1,6 +1,6 @@
 import express from "express";
-import { authorizeOwner, authorizeMember } from "../middleware/auth.js";
-import { Item, ShoppingList } from "../middleware/schemas/models.js";
+// import { authorizeOwner, authorizeMember } from "../middleware/auth.js";
+import { ShoppingList } from "../models/Shoppinglist.js";
 
 const shoppingListRouter = express.Router();
 

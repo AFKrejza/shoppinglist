@@ -1,7 +1,7 @@
 import express from "express";
-import { authenticateUser, decodeUser } from "../middleware/auth.js";
+import { authenticateUser, decodeUser } from "../middleware/authOLD.js";
 
-const userRouter = express.Router();
+export const userRouter = express.Router();
 
 userRouter.get("/:id", (req, res) => {
 
@@ -45,7 +45,3 @@ userRouter.delete("/:id", (req, res) => {
 	const decoded = decodeUser(req.headers.authorization);
 
 })
-
-export {
-	userRouter
-}
