@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const ID = {
-	type: Number,
+	type: String,
 	required: true
 };
 

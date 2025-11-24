@@ -1,13 +1,25 @@
 # Extension: REST Client by Huachao Mao
 
 @URL = http://localhost:3000
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjQxN2E5YmFhNjFkNTZmNTNiYTc5MSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5NzMwNDIsImV4cCI6MTc2Mzk4MDI0Mn0.LRKwbjauJ6MRsCDLDNUaR_JMpFxRKrl05kk_yVJ60pY
+@JWT_Sam = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjQxODBkYmFhNjFkNTZmNTNiYTc5NiIsImVtYWlsIjoic2FtQGdtYWlsLmNvbSIsImlhdCI6MTc2Mzk3MzE0MCwiZXhwIjoxNzYzOTgwMzQwfQ.5iFMJXC6atTH7BOAET48isoVeyWo6n-ttiXsvUkDyuw
 
 POST {{URL}}/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-	"userName": "John",
+	"userName": "john",
 	"email": "john@gmail.com",
+	"password": "password"
+}
+
+###
+POST {{URL}}/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+	"userName": "sam",
+	"email": "sam@gmail.com",
 	"password": "password"
 }
 
@@ -22,11 +34,4 @@ Content-Type: application/json
 
 ### replace the token!
 GET {{URL}}/auth/profile HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5MTQ5MTUsImV4cCI6MTc2MzkyMjExNX0.9qf6mDXbWVhC7kEc_XQVlIE-kegk7kwKKJ83qbIPsQg
-Content-Type: application/json
-
-{
-	"userName": "John",
-	"email": "john@gmail.com",
-	"password": "password"
-}
+Authorization: Bearer {{JWT}}

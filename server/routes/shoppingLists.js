@@ -1,22 +1,26 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
-import { ShoppingList } from "../models/Shoppinglist.js";
+import { ShoppingList } from "../models/ShoppingList.js";
+import shoppingListController from "../controllers/shoppinglistController.js";
 
 const shoppingListRouter = express.Router();
 
-shoppingListRouter.get("/:id", (req, res) => {
-	const authorized = authorizeMember(req.headers.authorization);
+shoppingListRouter.get("/:id", authMiddleware, (req, res) => {
+	try {
+		shoppingListController.get(req, res);
+	} catch (err) {
+		console.log(err);
+	}
 })
 
-// the rest of the routes will follow a similar pattern.
-// The main difference will be in which model is used and 
-// what properties are required.
 shoppingListRouter.put("/", authMiddleware, async (req, res) => {
 	try {
-		const { ownerId, name } = req.user;
+		console.log(req.user);
+		const ownerId = req.user.id;
+		const listName = req.body.name;
 		const shoppingList = new ShoppingList({
 			ownerId: ownerId,
-			name: name
+			name: listName
 		});
 		console.log(shoppingList);
 		await shoppingList.validate();
@@ -35,12 +39,12 @@ shoppingListRouter.put("/", authMiddleware, async (req, res) => {
 // the items array will be updated here
 // because they're part of the shopping list document
 shoppingListRouter.patch("/:id", (req, res) => {
-	const authorized = authorizeMember(req.headers.authorization);
+
 })
 
 
 shoppingListRouter.delete("/:id", (req, res) => {
-	const authorized = authorizeMember(req.headers.authorization);
+
 })
 
 export {

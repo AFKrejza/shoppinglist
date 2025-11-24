@@ -1,18 +1,14 @@
 @URL = http://localhost:3000
-@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5MTQ5MTUsImV4cCI6MTc2MzkyMjExNX0.9qf6mDXbWVhC7kEc_XQVlIE-kegk7kwKKJ83qbIPsQg
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjQxN2E5YmFhNjFkNTZmNTNiYTc5MSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5ODAyMDUsImV4cCI6MTc2Mzk4NzQwNX0.gn6-Z1JIxo1MYLpMxs3q8HhSqBEumRk2s93wIXSTNIA
 @project_id = 1
 
 ###
-GET {{URL}}/projects/{{project_id}} HTTP/1.1
+GET {{URL}}/shoppinglists/{{project_id}} HTTP/1.1
 Authorization: Bearer {{JWT}}
-Content-Type: application/json
 
-{
-	
-}
 
 ###
-PUT {{URL}}/projects HTTP/1.1
+PUT {{URL}}/shoppinglists HTTP/1.1
 Authorization: Bearer {{JWT}}
 Content-Type: application/json
 
@@ -21,7 +17,7 @@ Content-Type: application/json
 }
 
 ###
-PATCH {{URL}}/projects/{{project_id}} HTTP/1.1
+PATCH {{URL}}/shoppinglists/{{project_id}} HTTP/1.1
 Authorization: Bearer {{JWT}}
 Content-Type: application/json
 
@@ -30,7 +26,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{URL}}/projects/{{project_id}} HTTP/1.1
+DELETE {{URL}}/shoppinglists/{{project_id}} HTTP/1.1
 Authorization: Bearer {{JWT}}
 Content-Type: application/json
 

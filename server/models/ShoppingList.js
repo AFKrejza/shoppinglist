@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const OWNERID = {
-	type: Number,
+	type: String,
 	required: true,
 };
 
@@ -11,7 +11,7 @@ const NAME = {
 };
 
 const ID = {
-	type: Number,
+	type: String,
 	required: true
 };
 
