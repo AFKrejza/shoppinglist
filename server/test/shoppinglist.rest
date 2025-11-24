@@ -1,11 +1,18 @@
 @URL = http://localhost:3000
-@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjQxN2E5YmFhNjFkNTZmNTNiYTc5MSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5ODAyMDUsImV4cCI6MTc2Mzk4NzQwNX0.gn6-Z1JIxo1MYLpMxs3q8HhSqBEumRk2s93wIXSTNIA
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5OTYzMzYsImV4cCI6MTc2NDAwMzUzNn0.fYAFvehMGJHWXNkvdYBPZfx6mtrT0VyJqAAYVTXD0vo
+@USER_ID = 69231ba32354764bf4254cf3
 @project_id = 1
 
 ###
 GET {{URL}}/shoppinglists/{{project_id}} HTTP/1.1
 Authorization: Bearer {{JWT}}
 
+###
+GET {{URL}}/users/{{USER_ID}}/shoppinglists?page=1&pageSize=10
+Authorization: Bearer {{JWT}}
+
+###
+GET {{URL}}/shoppinglists/listAll
 
 ###
 PUT {{URL}}/shoppinglists HTTP/1.1

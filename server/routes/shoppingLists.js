@@ -5,6 +5,8 @@ import shoppingListController from "../controllers/shoppinglistController.js";
 
 const shoppingListRouter = express.Router();
 
+shoppingListRouter.get("/listAll", shoppingListController.listAll);
+
 shoppingListRouter.get("/:id", authMiddleware, (req, res) => {
 	try {
 		shoppingListController.get(req, res);
@@ -13,28 +15,8 @@ shoppingListRouter.get("/:id", authMiddleware, (req, res) => {
 	}
 })
 
-shoppingListRouter.put("/", authMiddleware, async (req, res) => {
-	try {
-		console.log(req.user);
-		const ownerId = req.user.id;
-		const listName = req.body.name;
-		const shoppingList = new ShoppingList({
-			ownerId: ownerId,
-			name: listName
-		});
-		console.log(shoppingList);
-		await shoppingList.validate();
-		res.status(201).send(shoppingList);
-	} catch (error) {
-		if (error.name === "ValidationError") {
-			const messages = Object.values(error.errors).map(err => err.message);
-			console.log(error);
-			return res.status(400).json({ errors: messages });
-		}
-		console.log(error);
-		res.error(500).send(error);
-	}
-})
+shoppingListRouter.put("/", authMiddleware, shoppingListController.create);
+
 
 // the items array will be updated here
 // because they're part of the shopping list document

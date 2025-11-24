@@ -2,6 +2,7 @@ import { User } from "../models/User.js";
 import { hashPassword, comparePassword } from "../services/hashService.js";
 import { generateToken } from "../services/jwtService.js";
 
+// TODO: can i just write async function register(req, res) instead? I prefer it that way
 const register = async (req, res) => {
 	try {
 		const { userName, email, password } = req.body;
@@ -11,7 +12,7 @@ const register = async (req, res) => {
 			return res.status(400).json({ message: "User already exists!" }); // TODO: standardize error handling
 		}
 			
-		const hashedPassword = await hashPassword(password);
+		const hashedPassword = await hashPassword(password); // TODO: add password hashing!
 		const user = new User({ userName, email, password });
 		await user.save(); // TODO: add verification that the user exists (like RETURN in postgres)
 		console.log(`User ${email} registered`);

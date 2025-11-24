@@ -1,5 +1,7 @@
 import express from "express";
-import { authenticateUser, decodeUser } from "../middleware/authOLD.js";
+import shoppingListController from "../controllers/shoppinglistController.js";
+import { User } from "../models/User.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 export const userRouter = express.Router();
 
@@ -26,15 +28,17 @@ userRouter.put("/", async (req, res) => {
 			return res.status(400).json({ errors: messages });
 		}
 		console.log(error);
-		res.error(500).send(error);
+		res.status(500).send(error);
 	}
 })
 
-// used to authenticate. Returns a JWT
-userRouter.post("/login", (req, res) => {
-	const token = authenticateUser(req.body);
-	return token;
-})
+// get a page of shopping lists
+// takes page & pageSize query parameters
+userRouter.get(
+	"/:userId/shoppinglists",
+	authMiddleware,
+	shoppingListController.listPage
+)
 
 
 userRouter.patch("/:id", (req, res) => {
@@ -42,6 +46,5 @@ userRouter.patch("/:id", (req, res) => {
 })
 
 userRouter.delete("/:id", (req, res) => {
-	const decoded = decodeUser(req.headers.authorization);
 
 })
