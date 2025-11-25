@@ -1,42 +1,27 @@
 import mongoose from "mongoose";
+import { ItemSchema } from "./Item.js";
 
-const OWNERID = {
-	type: String,
-	required: true,
-};
-
-const NAME = {
-	type: String,
-	required: true
-};
-
-const ID = {
-	type: String,
-	required: true
-};
-
-const MEMBERLIST = {
-	type: Array,
-	required: true
-};
-
-const ITEMLIST = {
-	type: Array,
-	required: true
-};
-
-const ISARCHIVED = {
-	type: Boolean,
-	required: true
-};
-
-const create = new mongoose.Schema({
-	ownerId: OWNERID,
-	name: NAME,
+export const ShoppingListSchema = new mongoose.Schema({
+	ownerId: {
+		type: String,
+		required: true,
+	},
+	name: {
+		type: String,
+		required: true
+	},
+	isArchived: {
+		type: Boolean,
+		default: false
+	},
+	memberList: {
+		type: [String], 
+		default: []
+	},
+	itemList: {
+		type: [ItemSchema],
+		default: []
+	}
 });
 
-const ShoppingList = mongoose.model('ShoppingList', create);
-
-export {
-	ShoppingList
-}
+export const ShoppingList = mongoose.model('ShoppingList', ShoppingListSchema);

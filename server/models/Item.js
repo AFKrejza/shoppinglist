@@ -1,25 +1,28 @@
 import mongoose from "mongoose";
 
-const create = new mongoose.Schema({
+export const ItemSchema = new mongoose.Schema({
+	_id: {
+		type: String,
+		// required: true
+	},
 	name: {
 		type: String,
 		required: true
 	},
 	quantity: {
-		type: String,
-		required: true
+		type: Number,
+		required: true,
+		default: 1
 	},
 	unit: {
 		type: String,
-		required: true
+		required: true,
+		default: ""
 	},
 	ticked: {
 		type: Boolean,
-		required: true
+		default: false
 	},
 });
-const Item = mongoose.model('Item', create);
 
-export {
-	Item
-}
+export const Item = mongoose.model('Item', ItemSchema);

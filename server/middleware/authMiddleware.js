@@ -1,6 +1,6 @@
 import { verifyToken } from "../services/jwtService.js";
 
-function auth(req, res, next) {
+async function auth(req, res, next) {
 	const authHeader = req.headers.authorization;
 	if (!authHeader)
 		return res.status(401).json({ message: "Missing token" });
@@ -9,7 +9,7 @@ function auth(req, res, next) {
 	if (!token) return res.status(401).json({ message: "Malformed token" });
 
 	try {
-		const decoded = verifyToken(token);
+		const decoded = await verifyToken(token);
 		req.user = decoded;					// note: this is the only true source of user credentials. Don't use req.body for authentication!
 		next();
 	} catch (err) {

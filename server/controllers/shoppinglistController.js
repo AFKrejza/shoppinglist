@@ -71,7 +71,7 @@ async function create(req, res) {
 
 // TODO: members can only change certain things. Add a $or to ownerId and memberList
 // add a way to only change one item
-// req.body should only contain data to be updated. TODO: create a validator
+// req.body should only contain data to be updated. TODO: create a validator!
 async function update (req, res) {
 	try {
 		const userId = req.user.id;
@@ -83,7 +83,6 @@ async function update (req, res) {
 		if (!list)
 			return res.status(404).json({ message: "List not found or unauthorized"});
 
-		// this handles partial updates
 		const updates = {};
 		// if (updates.ownerId) list.ownerId = updates.ownerId; // TODO: implement owner changes
 		if (req.body.name !== undefined)
@@ -93,18 +92,48 @@ async function update (req, res) {
 		if (req.body.isArchived !== undefined)
 			updates.isArchived = req.body.isArchived;
 
-		// updated items must be sent in their entirety!
+		// TODO: this just overwrites the itemList
+		// if (req.body.itemList !== undefined) {
+		// 	req.body.itemList.forEach(item => {
+		// 		item = new Item({
+		// 			_id: item._id,
+		// 			name: item.name,
+		// 			quantity: item.quantity,
+		// 			unit: item.unit,
+		// 			ticked: item.ticked
+		// 		});
+		// 	});
+		// 	updates.itemList = req.body.itemList;
+		// }
+
+		// this part handles creating items and updating them on partial data
 		if (req.body.itemList !== undefined) {
-			req.body.itemList.array.forEach(item => {
-				Item.validate();
+			const updatedItemList = [...list.itemList];
+
+			req.body.itemList.forEach(item => {
+				const existingItem = updatedItemList.find((elem) => elem._id === item._id);
+
+				if (existingItem) {
+					if (item.name !== undefined) existingItem.name = item.name;
+					if (item.quantity !== undefined) existingItem.quantity = item.quantity;
+					if (item.unit !== undefined) existingItem.unit = item.unit;
+					if (item.ticked !== undefined) existingItem.ticked = item.ticked;
+					// existingItem.validate();
+				}
+				else {
+					updates.itemList.push(item); // this should validate it (check the subdocument in the ShoppingList model)
+				}
 			});
-			updates.itemList = req.body.itemList;
+			updates.itemList = updatedItemList;
 		}
-		
+
+		// TODO: add a check for the memberList to ensure that added user IDs:
+		// exist, are not the owner, and aren't already added
+
 		const updatedList = await ShoppingList.findByIdAndUpdate(
 			listId,
 			{ $set: updates },
-			{ new: true }
+			{ new: true, runValidators: true }
 		);
 		return res.status(200).json(updatedList);
 
