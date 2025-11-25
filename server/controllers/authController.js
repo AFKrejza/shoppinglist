@@ -3,7 +3,7 @@ import { hashPassword, comparePassword } from "../services/hashService.js";
 import { generateToken } from "../services/jwtService.js";
 
 // TODO: can i just write async function register(req, res) instead? I prefer it that way
-const register = async (req, res) => {
+async function register(req, res) {
 	try {
 		const { userName, email, password } = req.body;
 		const existingUser = await User.findOne({ email }); // this works since it's a model? TODO: verify how mongoose actually works
@@ -12,7 +12,7 @@ const register = async (req, res) => {
 			return res.status(400).json({ message: "User already exists!" }); // TODO: standardize error handling
 		}
 			
-		const hashedPassword = await hashPassword(password); // TODO: add password hashing!
+		const hashedPassword = await hashPassword(password); // TODO: add password hashing! Reset the db too
 		const user = new User({ userName, email, password });
 		await user.save(); // TODO: add verification that the user exists (like RETURN in postgres)
 		console.log(`User ${email} registered`);
@@ -22,7 +22,7 @@ const register = async (req, res) => {
 	}
 };
 
-const login = async (req, res) => {
+async function login(req, res) {
 	try {
 		const { email, password } = req.body;
 		const user = await User.findOne({ email });
@@ -36,7 +36,7 @@ const login = async (req, res) => {
 };
 
 // note: req.user is set by auth middleware after the token has been verified
-const profile = (req, res) => {
+async function profile(req, res) {
 	res.json({
 		message: "You are logged in",
 		user: req.user

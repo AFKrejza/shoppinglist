@@ -1,6 +1,6 @@
 import { verifyToken } from "../services/jwtService.js";
 
-const auth = (req, res, next) => {
+function auth(req, res, next) {
 	const authHeader = req.headers.authorization;
 	if (!authHeader)
 		return res.status(401).json({ message: "Missing token" });
