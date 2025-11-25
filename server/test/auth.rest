@@ -1,9 +1,30 @@
 # Extension: REST Client by Huachao Mao
 
 @URL = http://localhost:3000
-@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjM5OTkxMDksImV4cCI6MTc2NDYwMzkwOX0.qWV0Ap0esYLENBO3R6uKvLlYCPPcgz6jt2h3shqbaiU
-@JWT_Sam = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjQxODBkYmFhNjFkNTZmNTNiYTc5NiIsImVtYWlsIjoic2FtQGdtYWlsLmNvbSIsImlhdCI6MTc2Mzk3MzE0MCwiZXhwIjoxNzYzOTgwMzQwfQ.5iFMJXC6atTH7BOAET48isoVeyWo6n-ttiXsvUkDyuw
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQwNjE4ODMsImV4cCI6MTc2NDY2NjY4M30.jCAXcZgMvBHbz-1gS0bj7yar2EBnEy8MhQUKbkw6pPM
+@JWT_Sam = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjU3MmU2YTZjMzJhZjdmOTlmZGY4NyIsImVtYWlsIjoic2FtQGdtYWlsLmNvbSIsImlhdCI6MTc2NDA2MjgyNCwiZXhwIjoxNzY0NjY3NjI0fQ.uV4iSy_RYKYg0ujR2JNDjJeig9-eyMF9JBTUPdEPp18
 
+### replace the token!
+POST {{URL}}/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+	"email": "john@gmail.com",
+	"password": "password"
+}
+
+#> {%
+#	client.global.set("JWT", response.body.token)
+#%}
+# TODO: create a .env file just for testing and
+# set the JWT automatically 
+
+### 
+GET {{URL}}/auth/profile HTTP/1.1
+Authorization: Bearer {{JWT}}
+
+
+###
 POST {{URL}}/auth/register HTTP/1.1
 Content-Type: application/json
 
@@ -14,6 +35,19 @@ Content-Type: application/json
 }
 
 ###
+POST {{URL}}/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+	"email": "sam@gmail.com",
+	"password": "password"
+}
+
+### 
+GET {{URL}}/auth/profile HTTP/1.1
+Authorization: Bearer {{{{JWT_Sam}}}}
+
+###
 POST {{URL}}/auth/register HTTP/1.1
 Content-Type: application/json
 
@@ -22,16 +56,3 @@ Content-Type: application/json
 	"email": "sam@gmail.com",
 	"password": "password"
 }
-
-###
-POST {{URL}}/auth/login HTTP/1.1
-Content-Type: application/json
-
-{
-	"email": "john@gmail.com",
-	"password": "password"
-}
-
-### replace the token!
-GET {{URL}}/auth/profile HTTP/1.1
-Authorization: Bearer {{JWT}}

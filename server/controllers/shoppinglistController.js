@@ -68,9 +68,49 @@ const create = async (req, res) => {
 	}
 }
 
+// TODO: members can only change certain things. Add a $or to ownerId and memberList
+// add a way to only change one item
+// req.body should only contain data to be updated. TODO: create a validator
+const update = async (req, res) => {
+	try {
+		const userId = req.user.id;
+		const listId = req.params.id;
+		const list = await ShoppingList.findOne({
+				ownerId: userId,
+				_id: listId
+		});
+		if (!list)
+			return res.status(404).json({ message: "List not found or unauthorized"});
+
+		// this handles partial updates
+		const updates = {};
+		// if (updates.ownerId) list.ownerId = updates.ownerId; // TODO: implement owner changes
+		if (req.body.name !== undefined)
+			updates.name = req.body.name;
+		if (req.body.memberList !== undefined) // TODO: both lists should have partial updating
+			updates.memberList = req.body.memberList;
+		if (req.body.itemList !== undefined)
+			updates.itemList = req.body.itemList;
+		if (req.body.isArchived !== undefined)
+			updates.isArchived = req.body.isArchived;
+		
+		const updatedList = await ShoppingList.findByIdAndUpdate(
+			listId,
+			{ $set: updates },
+			{ new: true }
+		);
+		return res.status(200).json(updatedList);
+
+	} catch (error) {
+		console.log(error);
+		res.status(500).send(error);
+	}
+}
+
 export default {
 	get,
 	listPage,
 	listAll,
-	create
+	create,
+	update
 }
