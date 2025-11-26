@@ -111,17 +111,33 @@ async function update (req, res) {
 			const updatedItemList = [...list.itemList];
 
 			req.body.itemList.forEach(item => {
-				const existingItem = updatedItemList.find((elem) => elem._id === item._id);
+				const existingItem = updatedItemList.find(
+					elem => elem._id.toString() === item._id
+				);
 
 				if (existingItem) {
 					if (item.name !== undefined) existingItem.name = item.name;
 					if (item.quantity !== undefined) existingItem.quantity = item.quantity;
 					if (item.unit !== undefined) existingItem.unit = item.unit;
 					if (item.ticked !== undefined) existingItem.ticked = item.ticked;
+					// existingItem = new Item({
+					// 	_id: existingItem._id,
+					// 	name: existingItem.name,
+					// 	quantity: existingItem.quantity,
+					// 	unit: existingItem.unit,
+					// 	ticked: existingItem.ticked
+					// });
 					// existingItem.validate();
 				}
 				else {
-					updates.itemList.push(item); // this should validate it (check the subdocument in the ShoppingList model)
+					const newItem = new Item({
+						name: item.name,
+						quantity: item.quantity,
+						unit: item.unit,
+						ticked: item.ticked
+					});
+					newItem.validate();
+					updatedItemList.push(newItem); // this should validate it (check the subdocument in the ShoppingList model)
 				}
 			});
 			updates.itemList = updatedItemList;

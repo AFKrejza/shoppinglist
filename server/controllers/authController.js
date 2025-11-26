@@ -28,7 +28,7 @@ async function login(req, res) {
 		const { email, password } = req.body;
 		const user = await User.findOne({ email });
 		if (!user)
-			return res.status(400).json({ message: "Invalid email or password" });
+			return res.status(400).json({ message: "Invalid email" });
 
 		const checkPassword = await comparePassword(password, user.password);
 		if (!checkPassword)
