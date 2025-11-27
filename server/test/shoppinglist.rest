@@ -1,9 +1,9 @@
 @URL = http://localhost:3000
-@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjZiNDY5MmM0YWFkNTVkMzYzZTlkYSIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQxNDQyMzgsImV4cCI6MTc2NDc0OTAzOH0.aattRc5QNXdu2YKr8Enis7yCsD7qzAO3e9gDPeMNnkk
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Mjg2M2QzODY5NjgxMzQ0OTllNTVkMiIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQyNjAzMTMsImV4cCI6MTc2NDg2NTExM30.575w8IKKYUGgOQ-8NKCmfuJl0zReQqz3qXCaRUuWhUk
 @USER_ID = 6926b4692c4aad55d363e9da
-@LIST_ID = 6926b4b02c4aad55d363e9df
+@LIST_ID = 692879f8145be6837de600d5
 
-### works!
+###
 GET {{URL}}/shoppinglists/{{LIST_ID}} HTTP/1.1
 Authorization: Bearer {{JWT}}
 
@@ -33,12 +33,12 @@ Content-Type: application/json
 	"memberList": ["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQwNjE4ODMsImV4cCI6MTc2NDY2NjY4M30.jCAXcZgMvBHbz-1gS0bj7yar2EBnEy8MhQUKbkw6pPM"],
 	"itemList": [
 		{
-			"_id": "6926b719914781b7b849f93c",
+			"_id": "69287a02145be6837de600d9",
 			"name": "MODIFIED",
-			"ticked": false
+			"ticked": true
 		},
 		{
-			"_id": "6926b719914781b7b849f93d",
+			"_id": "69287a02145be6837de600da",
 			"name": "UPDATED",
 			"unit": "30",
 			"ticked": true
@@ -67,7 +67,7 @@ Authorization: Bearer {{JWT}}
 Content-Type: application/json
 
 {
-	
+	"_id": "69287cb5ae90612f6ac72956"
 }
 
 ###

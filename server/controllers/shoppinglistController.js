@@ -1,12 +1,12 @@
 import { ShoppingList } from "../models/ShoppingList.js";
 import { Item } from "../models/Item.js";
 
+// doesn't work! needs the full ID
 async function get(req, res) {
 	try {
-		// TODO: check that ID is a number
 		const id = req.params.id;
 		const ownerId = req.user.ownerId;
-		const shoppingList = await ShoppingList.findOne({_id: id,});
+		const shoppingList = await ShoppingList.findOne({_id: id, ownerId: ownerId });
 		res.status(200).send(shoppingList);
 	} catch (err) {
 		console.log(err); // TODO: add error handling middleware
@@ -149,10 +149,33 @@ async function update (req, res) {
 	}
 }
 
+async function remove(req, res) {
+	try {
+		const ownerId = req.user.id;
+		const listId = req.body._id;
+		const deletedList = await ShoppingList.deleteOne({ _id: listId, ownerId: ownerId }, { new: true });
+
+		if (!deletedList.deletedCount)
+			throw new Error("Shopping list not found or invalid permissions");
+
+		console.log(deletedList);
+		res.status(201).send(deletedList);
+	} catch (error) {
+		if (error.name === "ValidationError") {
+			const messages = Object.values(error.errors).map(err => err.message);
+			console.log(error);
+			return res.status(400).json({ errors: messages });
+		}
+		console.log(error);
+		res.status(500).send(error);
+	}
+}
+
 export default {
 	get,
 	listPage,
 	listAll,
 	create,
-	update
+	update,
+	remove
 }
