@@ -1,7 +1,7 @@
 @URL = http://localhost:3000
-@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Mjg2M2QzODY5NjgxMzQ0OTllNTVkMiIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQyNjAzMTMsImV4cCI6MTc2NDg2NTExM30.575w8IKKYUGgOQ-8NKCmfuJl0zReQqz3qXCaRUuWhUk
-@USER_ID = 6926b4692c4aad55d363e9da
-@LIST_ID = 692879f8145be6837de600d5
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Mjg2M2QzODY5NjgxMzQ0OTllNTVkMiIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQyNjM1NTUsImV4cCI6MTc2NDg2ODM1NX0.DeXefa8LProwxz_w5N_gPpAfDpOh4JHrN6eLvsD_bEg
+@USER_ID = 692863d386968134499e55d2
+@LIST_ID = 69287cb4ae90612f6ac7294e
 
 ###
 GET {{URL}}/shoppinglists/{{LIST_ID}} HTTP/1.1
@@ -13,6 +13,7 @@ Authorization: Bearer {{JWT}}
 
 ### debug / admin only
 GET {{URL}}/shoppinglists/listAll
+Authorization: Bearer {{JWT}}
 
 ###
 PUT {{URL}}/shoppinglists HTTP/1.1
@@ -33,8 +34,8 @@ Content-Type: application/json
 	"memberList": ["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjMxYmEzMjM1NDc2NGJmNDI1NGNmMyIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQwNjE4ODMsImV4cCI6MTc2NDY2NjY4M30.jCAXcZgMvBHbz-1gS0bj7yar2EBnEy8MhQUKbkw6pPM"],
 	"itemList": [
 		{
-			"_id": "69287a02145be6837de600d9",
-			"name": "MODIFIED",
+			"_id": "69288a08cf9c859afe2da015",
+			"name": "d",
 			"ticked": true
 		},
 		{
