@@ -34,10 +34,12 @@ Content-Type: application/json
 	"itemList": [
 		{
 			"_id": "6926b719914781b7b849f93c",
+			"name": "MODIFIED",
 			"ticked": false
 		},
 		{
 			"_id": "6926b719914781b7b849f93d",
+			"name": "UPDATED",
 			"unit": "30",
 			"ticked": true
 		}

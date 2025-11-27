@@ -2,11 +2,10 @@ import { User } from "../models/User.js";
 import { hashPassword, comparePassword } from "../services/hashService.js";
 import { generateToken } from "../services/jwtService.js";
 
-// TODO: can i just write async function register(req, res) instead? I prefer it that way
 async function register(req, res) {
 	try {
 		const { userName, email, password } = req.body;
-		const existingUser = await User.findOne({ email }); // this works since it's a model? TODO: verify how mongoose actually works
+		const existingUser = await User.findOne({ email });
 		if (existingUser) {
 			console.log("User already exists!");
 			return res.status(400).json({ message: "User already exists!" }); // TODO: standardize error handling

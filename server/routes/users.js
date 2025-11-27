@@ -9,6 +9,7 @@ userRouter.get("/:id", (req, res) => {
 
 })
 
+// put this in userController
 userRouter.put("/", async (req, res) => {
 	try {
 		const { userName, email } = req.body;

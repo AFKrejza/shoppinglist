@@ -24,4 +24,6 @@ export const ShoppingListSchema = new mongoose.Schema({
 	}
 });
 
+// note: mongoose lowercases and pluralizes the model name based on the first argument 'ShoppingList' into 'shoppinglists'
+// check with show collections in mongosh
 export const ShoppingList = mongoose.model('ShoppingList', ShoppingListSchema);
