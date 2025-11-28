@@ -9,7 +9,7 @@ shoppingListRouter.get("/listAll", authMiddleware, authRole(ROLES.ADMIN), shoppi
 
 shoppingListRouter.put("/", authMiddleware, shoppingListController.create);
 
-shoppingListRouter.get("/:id", authMiddleware, shoppingListController.get);
+shoppingListRouter.get("/:id", authMiddleware, shoppingListController.findById);
 
 shoppingListRouter.patch("/:id", authMiddleware, shoppingListController.update);
 

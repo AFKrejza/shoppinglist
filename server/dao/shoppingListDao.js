@@ -17,7 +17,7 @@ export const shoppingListDao = {
 		.sort({ createdAt: -1 });
 	},
 
-	async getAll() {
+	async listAll() {
 		return await ShoppingList.find();
 	},
 

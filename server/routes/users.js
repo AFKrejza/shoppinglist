@@ -32,10 +32,7 @@ userRouter.put("/", async (req, res) => {
 
 // get a page of shopping lists
 // takes page & pageSize query parameters
-userRouter.get(
-	"/:userId/shoppinglists",
-	authMiddleware,
-	shoppingListController.listPage
+userRouter.get("/:userId/shoppinglists", authMiddleware, shoppingListController.getPage
 )
 
 
