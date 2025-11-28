@@ -34,6 +34,6 @@ export const shoppingListDao = {
 	},
 
 	async remove(listId, ownerId) {
-		return await ShoppingList.deleteOne({ _id: listId, ownerId: ownerId }, { new: true});
+		return await ShoppingList.deleteOne({ _id: listId, ownerId: ownerId });
 	}
 };

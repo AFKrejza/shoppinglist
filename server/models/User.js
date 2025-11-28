@@ -23,10 +23,16 @@ const PASSWORD = {
 	required: true,
 };
 
+const ROLE = {
+	type: String,
+	default: "USER"
+}
+
 const create = new mongoose.Schema({
 	userName: USERNAME,
 	email: EMAIL,
-	password: PASSWORD
+	password: PASSWORD,
+	role: ROLE
 });
 
 const User = mongoose.model('User', create);

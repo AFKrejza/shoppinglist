@@ -139,14 +139,14 @@ async function update (req, res) {
 async function remove(req, res) {
 	try {
 		const ownerId = req.user.id;
-		const listId = req.body._id;
-		const deletedList = await shoppingListDao.remove(listId, ownerId);
+		const listId = req.params.id;
+		const deleteMsg = await shoppingListDao.remove(listId, ownerId);
 
-		if (!deletedList.deletedCount)
+		if (!deleteMsg.deletedCount)
 			throw new Error("Shopping list not found or invalid permissions");
 
-		console.log(deletedList);
-		res.status(201).send(deletedList);
+		console.log(deleteMsg);
+		res.status(201).send(deleteMsg);
 	} catch (error) {
 		if (error.name === "ValidationError") {
 			const messages = Object.values(error.errors).map(err => err.message);
