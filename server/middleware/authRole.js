@@ -1,11 +1,5 @@
 import { userDao } from "../dao/userDao.js";
-
-// basically an enumeration
-export const ROLES = {
-	USER: 0,
-	ADMIN: 1,
-	SUPERADMIN: 2,
-};
+import { ROLES } from "../config/roles.js";
 
 export function authRole(minRole) {
 	return async function(req, res, next) {

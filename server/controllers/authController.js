@@ -1,6 +1,7 @@
 import { User } from "../models/User.js";
 import { hashPassword, comparePassword } from "../services/hashService.js";
 import { generateToken } from "../services/jwtService.js";
+import { userService } from "../services/userService.js";
 
 async function register(req, res) {
 	try {
@@ -31,9 +32,9 @@ async function login(req, res) {
 
 		const checkPassword = await comparePassword(password, user.password);
 		if (!checkPassword)
-			return res.status(400).json({ message: "Invlid password" });
+			return res.status(400).json({ message: "Invalid password" });
 
-		const token = await generateToken({ id: user._id, email: user.email });
+		const token = await generateToken({ id: user._id });
 
 		res.json({message: "Logged in", token});
 	} catch (error) {
@@ -42,11 +43,12 @@ async function login(req, res) {
 	}
 };
 
-// note: req.user is set by auth middleware after the token has been verified
+// note: req.user is set by authMiddleware after the token has been verified
 async function profile(req, res) {
+	const user = await userService.findById(req.user.id);
 	res.json({
 		message: "You are logged in",
-		user: req.user
+		user: user
 	});
 };
 

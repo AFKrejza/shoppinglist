@@ -1,8 +1,8 @@
 # Extension: REST Client by Huachao Mao
 
 @URL = http://localhost:3000
-@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjljNDk2MWU3ZTkzZGJjNDkxNjkwOCIsImVtYWlsIjoiam9obkBnbWFpbC5jb20iLCJpYXQiOjE3NjQzNDQ5ODQsImV4cCI6MTc2NDk0OTc4NH0.TxhL1naMWYgXDDcfx6XBGX-FAWLj1AWfGCImmku4swQ
-@JWT_Sam = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MjU3MmU2YTZjMzJhZjdmOTlmZGY4NyIsImVtYWlsIjoic2FtQGdtYWlsLmNvbSIsImlhdCI6MTc2NDA2MjgyNCwiZXhwIjoxNzY0NjY3NjI0fQ.uV4iSy_RYKYg0ujR2JNDjJeig9-eyMF9JBTUPdEPp18
+@JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmFjOGI4OTNmNWE2MzMyOGI2ZmUwNCIsImlhdCI6MTc2NDQyNTk5NSwiZXhwIjoxNzY1MDMwNzk1fQ.aOvwpzCp48kSeYmZlioVFAw6xUHSt5m7iXOLz-TBO5k
+@JWT_SUPERADMIN = 
 
 ### replace the token!
 POST {{URL}}/auth/login HTTP/1.1
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 ### 
 GET {{URL}}/auth/profile HTTP/1.1
-Authorization: Bearer {{{{JWT_Sam}}}}
+Authorization: Bearer {{{{JWT_SUPERADMIN}}}}
 
 ###
 POST {{URL}}/auth/register HTTP/1.1

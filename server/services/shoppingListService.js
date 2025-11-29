@@ -34,7 +34,7 @@ export const shoppingListService = {
 		if (!list)
 			throw new Error("List not found or unauthorized");
 		
-		if (ownerId != list.ownerId && (
+		if (ownerId !== list.ownerId && (
 			data.name		!== undefined ||
 			data.isArchived	!== undefined ||
 			data.memberList	!== undefined ||

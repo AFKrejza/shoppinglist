@@ -1,7 +1,8 @@
 import express from "express";
 import authMiddleware from "../middleware/authMiddleware.js";
 import shoppingListController from "../controllers/shoppinglistController.js";
-import { ROLES, authRole } from "../middleware/authRole.js";
+import { authRole } from "../middleware/authRole.js";
+import { ROLES } from "../config/roles.js";
 
 const shoppingListRouter = express.Router();
 

@@ -1,5 +1,3 @@
-import { Item } from "../models/Item.js";
-import { shoppingListDao } from "../dao/shoppingListDao.js";
 import { shoppingListService } from "../services/shoppingListService.js";
 
 async function findById(req, res) {
@@ -13,6 +11,7 @@ async function findById(req, res) {
 	}
 }
 
+// note: page size change must reset page to 1 on the frontend, else it'll skip some
 async function getPage(req, res) {
 	try{
 		const page = Number(req.query.page) || 1;
@@ -59,7 +58,7 @@ async function create(req, res) {
 // TODO: split this function into different parts, add an abl and dao, etc
 // this function can ONLY modify and create, it CANNOT delete stuff.
 // create proper subcontrollers or other ways to do it.
-async function update (req, res) {
+async function update(req, res) {
 	try {
 		const listId = req.params.id;
 		const userId = req.user.id;
