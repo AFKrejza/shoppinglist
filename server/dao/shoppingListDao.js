@@ -5,6 +5,10 @@ export const shoppingListDao = {
 		return await ShoppingList.findOne({_id: listId, ownerId: ownerId });
 	},
 
+	async findList(listId) {
+		return await ShoppingList.findOne({ _id: listId });
+	},
+
 	async getPage(userId, skip, pageSize) {
 		return await ShoppingList.find({
 			$or: [
@@ -35,5 +39,21 @@ export const shoppingListDao = {
 
 	async remove(listId, ownerId) {
 		return await ShoppingList.deleteOne({ _id: listId, ownerId: ownerId });
+	},
+
+	async removeItem(listId, itemId) {
+		return await ShoppingList.findByIdAndUpdate(
+			listId,
+			{ $pull: { itemList: { _id: itemId }}},
+			{new: true}
+		);
+	},
+
+	async removeMember(listId, memberId) {
+		return await ShoppingList.findByIdAndUpdate(
+			listId,
+			{ $pull: { memberList: { _id: memberId }}},
+			{new: true}
+		);
 	}
 };

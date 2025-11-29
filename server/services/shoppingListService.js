@@ -1,6 +1,8 @@
 import { shoppingListDao } from "../dao/shoppingListDao.js";
 import { ShoppingList } from "../models/ShoppingList.js";
 import { Item } from "../models/Item.js";
+import { roleService, getRole } from "./roleService.js";
+import { ROLES } from "../config/roles.js";
 
 export const shoppingListService = {
 	async findById(id, ownerId) {
@@ -97,11 +99,29 @@ export const shoppingListService = {
 		return updatedList;
 	},
 
+	// TODO: all 3 remove functions still need privilege checks!
 	async remove(listId, ownerId) {
 		const deleteMsg = await shoppingListDao.remove(listId, ownerId);
 		if (!deleteMsg.deletedCount)
 			throw new Error("Shopping list not found or invalid permissions");
 		console.log(deleteMsg);
 		return deleteMsg;
+	},
+
+	// members, the owner, and admins+ can use this
+	async removeItem(userId, listId, itemId) {
+		const existingList = await shoppingListDao.findList(listId);
+		console.log(existingList);
+		if (!existingList)
+			throw new Error("Shopping list not found");
+		
+		if (userId !== existingList.ownerId &&
+			!existingList.memberList.includes(userId) &&
+			!(await roleService(userId, ROLES.ADMIN))) {
+			throw new Error("Missing permissions");
+		}
+
+		const newList = await shoppingListDao.removeItem(listId, itemId);
+		return newList;
 	}
 };

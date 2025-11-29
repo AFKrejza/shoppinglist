@@ -8,6 +8,7 @@ async function findById(req, res) {
 		res.status(200).send(shoppingList);
 	} catch (err) {
 		console.log(err); // TODO: add error handling middleware
+		res.status(500).json({ error: error.message });
 	}
 }
 
@@ -50,12 +51,11 @@ async function create(req, res) {
 			return res.status(400).json({ errors: messages });
 		}
 		console.log(error);
-		res.status(500).send(error);
+		res.status(500).json({ error: error.message });
 	}
 }
 
 // TODO: members, owner, and admins should only be allowed to change certain things
-// TODO: split this function into different parts, add an abl and dao, etc
 // this function can ONLY modify and create, it CANNOT delete stuff.
 // create proper subcontrollers or other ways to do it.
 async function update(req, res) {
@@ -69,15 +69,15 @@ async function update(req, res) {
 		return res.status(200).json(updatedList);
 	} catch (error) {
 		console.log(error);
-		res.status(500).send(error);
+		res.status(500).json({ error: error.message })
 	}
 }
 
 async function remove(req, res) {
 	try {
-		const ownerId = req.user.id;
+		const userId = req.user.id;
 		const listId = req.params.id;
-		const deleteMsg = await shoppingListService.remove(listId, ownerId);
+		const deleteMsg = await shoppingListService.remove(listId, userId);
 		res.status(201).send(deleteMsg);
 	} catch (error) {
 		if (error.name === "ValidationError") {
@@ -86,7 +86,20 @@ async function remove(req, res) {
 			return res.status(400).json({ errors: messages });
 		}
 		console.log(error);
-		res.status(500).send(error);
+		res.status(500).json({ error: error.message });
+	}
+}
+
+async function removeItem(req, res) {
+	try {
+		const userId = req.user.id;
+		const listId = req.params.id;
+		const itemId = req.params.itemId;
+		const deleteMsg = await shoppingListService.removeItem(userId, listId, itemId);
+		res.status(201).send(deleteMsg);
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: error.message });
 	}
 }
 
@@ -96,5 +109,7 @@ export default {
 	listAll,
 	create,
 	update,
-	remove
+	remove,
+	removeItem,
+	// removeMember
 }

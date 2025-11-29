@@ -9,8 +9,9 @@ export const userController = {
 			const userId = req.user.id;
 			const data = req.body;
 			await userService.update(targetId, userId, data);
-			console.log(`User ${userId} updated`);
-			return res.status(200).json(`Updated`);
+			const message = `Updated ${targetId}'s ${Object.keys(data)}`;
+			console.log(message);
+			return res.status(200).json(message);
 		} catch (error) {
 			console.log(error);
 			res.status(500).json({ errors: error.message });

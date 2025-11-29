@@ -13,3 +13,12 @@ export async function getRole(userId) {
 	const user = await userDao.findById({ _id: userId });
 	return user.role;
 }
+
+// this just checks if the first user has higher privileges than the second
+// works like strcmp
+export async function roleCompare(firstId, secondId) {
+	const first = await getRole(firstId);
+	const second = await getRole(secondId);
+
+	return ROLES[first] - ROLES[second];
+}

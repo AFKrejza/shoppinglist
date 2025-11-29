@@ -16,7 +16,7 @@ async function register(req, res) {
 		const user = new User({ userName, email, password: hashedPassword });
 		await user.save(); // TODO: add verification that the user exists (like RETURN in postgres)
 		console.log(`User ${email} registered`);
-		res.status(201).json({ message: "User registered"});
+		res.status(201).json({ message: "User registered. Please log in."});
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ error: error.message });
@@ -45,11 +45,17 @@ async function login(req, res) {
 
 // note: req.user is set by authMiddleware after the token has been verified
 async function profile(req, res) {
-	const user = await userService.findById(req.user.id);
-	res.json({
-		message: "You are logged in",
-		user: user
-	});
+	try {
+		const user = await userService.findById(req.user.id);
+		if (!user)
+			return res.status(404).json({ message: "User not found" });
+		res.json({
+			message: "You are logged in",
+			user: user
+		});
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
 };
 
 export default {

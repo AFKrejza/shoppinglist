@@ -1,5 +1,6 @@
 import { User } from "../models/User.js";
 import { ROLES } from "./roles.js";
+import { hashPassword } from "../services/hashService.js";
 
 // this should run on each server start
 // since I regularly wipe the db and 
@@ -15,10 +16,11 @@ export async function setSuperAdmin() {
 		const superAdmin = new User({
 			userName: "superadmin",
 			email: superEmail,
-			password: superPassword,
-			role: "SUPERADMIN" // preferably import this from ROLES
+			password: await hashPassword(superPassword),
+			role: "SUPERADMIN"
 		});
 		await User.insertOne(superAdmin);
+		console.log("SUPERADMIN created");
 	} catch (error) {
 		console.log(`Super Admin initialization failure:\n${error}`);
 		close();
