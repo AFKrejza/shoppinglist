@@ -37,23 +37,23 @@ export const shoppingListDao = {
 		);
 	},
 
-	async remove(listId, ownerId) {
-		return await ShoppingList.deleteOne({ _id: listId, ownerId: ownerId });
+	async remove(listId) {
+		return await ShoppingList.deleteOne({ _id: listId });
 	},
 
 	async removeItem(listId, itemId) {
-		return await ShoppingList.findByIdAndUpdate(
-			listId,
+		const result = await ShoppingList.updateOne(
+			{ _id: listId },
 			{ $pull: { itemList: { _id: itemId }}},
-			{new: true}
 		);
+		return result.modifiedCount > 0;
 	},
 
 	async removeMember(listId, memberId) {
-		return await ShoppingList.findByIdAndUpdate(
-			listId,
-			{ $pull: { memberList: { _id: memberId }}},
-			{new: true}
+		const result = await ShoppingList.updateOne(
+			{ _id: listId },
+			{ $pull: { memberList: memberId }},
 		);
+		return result.modifiedCount > 0;
 	}
 };

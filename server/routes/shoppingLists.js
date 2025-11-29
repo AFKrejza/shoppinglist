@@ -12,7 +12,7 @@ shoppingListRouter.put("/", authMiddleware, shoppingListController.create);
 
 shoppingListRouter.delete("/:id/items/:itemId", authMiddleware, shoppingListController.removeItem);
 
-// shoppingListRouter.delete("/:id/members/:memberId", authMiddleware, shoppingListController.removeMember);
+shoppingListRouter.delete("/:id/members/:memberId", authMiddleware, shoppingListController.removeMember);
 
 shoppingListRouter.get("/:id", authMiddleware, shoppingListController.findById);
 

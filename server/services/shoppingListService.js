@@ -7,11 +7,18 @@ import { ROLES } from "../config/roles.js";
 export const shoppingListService = {
 	async findById(id, ownerId) {
 		const list = await shoppingListDao.findById(id, ownerId);
+		if (!list)
+			throw new Error("List not found or unauthorized");
+
 		return list;
 	},
 
 	async getPage(pageSize, skip, userId) {
 		const lists = await shoppingListDao.getPage(userId, skip, pageSize);
+
+		if (!list)
+			throw new Error("List not found or unauthorized");
+
 		return lists;
 	},
 
@@ -30,18 +37,24 @@ export const shoppingListService = {
 		return createdList;
 	},
 
-	async update(listId, ownerId, data) {
-		const list = await shoppingListDao.findById(listId, ownerId);
+	async update(listId, userId, data) {
+		const list = await shoppingListDao.findById(listId, userId);
 
 		if (!list)
 			throw new Error("List not found or unauthorized");
 		
-		if (ownerId !== list.ownerId && (
+		const isAdmin = await roleService(userId, ROLES.ADMIN);
+		const isOwner = list.ownerId === userId;
+		const isPrivileged = isOwner || isAdmin;
+
+		const modifyingRestrictedFields =
 			data.name		!== undefined ||
 			data.isArchived	!== undefined ||
 			data.memberList	!== undefined ||
-			data.ownerId	!== undefined
-		)) throw new Error("Missing permissions: members can only modify the item list");
+			data.ownerId	!== undefined;
+
+		if (!isPrivileged && modifyingRestrictedFields)
+			throw new Error("Missing permissions: members can only modify the item list");
 		
 		const updates = {};
 		if (data.name !== undefined)
@@ -100,10 +113,21 @@ export const shoppingListService = {
 	},
 
 	// TODO: all 3 remove functions still need privilege checks!
-	async remove(listId, ownerId) {
-		const deleteMsg = await shoppingListDao.remove(listId, ownerId);
+	async remove(listId, userId) {
+		const existingList = await shoppingListDao.findList(listId);
+
+		if (!existingList)
+			throw new Error("Shopping list not found");
+
+		const isAdmin = await roleService(userId, ROLES.ADMIN);
+		if (userId !== existingList.ownerId && !isAdmin) {
+			throw new Error("Invalid permissions");
+		}
+		const deleteMsg = await shoppingListDao.remove(listId);
+		
 		if (!deleteMsg.deletedCount)
 			throw new Error("Shopping list not found or invalid permissions");
+
 		console.log(deleteMsg);
 		return deleteMsg;
 	},
@@ -111,17 +135,40 @@ export const shoppingListService = {
 	// members, the owner, and admins+ can use this
 	async removeItem(userId, listId, itemId) {
 		const existingList = await shoppingListDao.findList(listId);
-		console.log(existingList);
 		if (!existingList)
 			throw new Error("Shopping list not found");
 		
 		if (userId !== existingList.ownerId &&
 			!existingList.memberList.includes(userId) &&
 			!(await roleService(userId, ROLES.ADMIN))) {
-			throw new Error("Missing permissions");
+				throw new Error("Missing permissions");
 		}
 
-		const newList = await shoppingListDao.removeItem(listId, itemId);
-		return newList;
+		const deleted = await shoppingListDao.removeItem(listId, itemId);
+
+		if (!deleted)
+			throw new Error(`Item ${itemId} not found`);
+
+		return itemId;
+	},
+
+	async removeMember(userId, listId, memberId) {
+		const existingList = await shoppingListDao.findList(listId);
+
+		if (!existingList)
+			throw new Error("Shopping list not found");
+
+		if (userId !== existingList.ownerId &&
+			!existingList.memberList.includes(userId) &&
+			!(await roleService(userId, ROLES.ADMIN))) {
+				throw new Error("Missing permissions");
+		}
+		
+		const deleted = await shoppingListDao.removeMember(listId, memberId);
+
+		if (!deleted)
+			throw new Error(`Member ${memberId} not found`);
+
+		return memberId;
 	}
 };

@@ -95,9 +95,22 @@ async function removeItem(req, res) {
 		const userId = req.user.id;
 		const listId = req.params.id;
 		const itemId = req.params.itemId;
-		const deleteMsg = await shoppingListService.removeItem(userId, listId, itemId);
-		res.status(201).send(deleteMsg);
+		const updatedList = await shoppingListService.removeItem(userId, listId, itemId);
+		res.status(201).send(updatedList);
 	} catch (error) {
+		console.log(error);
+		return res.status(500).json({ error: error.message });
+	}
+}
+
+async function removeMember(req, res) {
+	try {
+		const userId = req.user.id;
+		const listId = req.params.id;
+		const memberId = req.params.memberId;
+		const updatedList = await shoppingListService.removeMember(userId, listId, memberId);
+		res.status(201).send(updatedList);
+	} catch(error) {
 		console.log(error);
 		return res.status(500).json({ error: error.message });
 	}
@@ -111,5 +124,5 @@ export default {
 	update,
 	remove,
 	removeItem,
-	// removeMember
+	removeMember
 }
