@@ -1,12 +1,8 @@
 import { ShoppingList } from "../models/ShoppingList.js";
 
 export const shoppingListDao = {
-	async findById(listId, ownerId) {
-		return await ShoppingList.findOne({_id: listId, ownerId: ownerId });
-	},
-
-	async findList(listId) {
-		return await ShoppingList.findOne({ _id: listId });
+	async findById(listId) {
+		return await ShoppingList.findOne({_id: listId });
 	},
 
 	async getPage(userId, skip, pageSize) {

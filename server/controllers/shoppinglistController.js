@@ -2,12 +2,12 @@ import { shoppingListService } from "../services/shoppingListService.js";
 
 async function findById(req, res) {
 	try {
-		const id = req.params.id;
-		const ownerId = req.user.id;
-		const shoppingList = await shoppingListService.findById(id, ownerId);
+		const listId = req.params.id;
+		const userId = req.user.id;
+		const shoppingList = await shoppingListService.findById(listId, userId);
 		res.status(200).send(shoppingList);
-	} catch (err) {
-		console.log(err); // TODO: add error handling middleware
+	} catch (error) {
+		console.log(error);
 		res.status(500).json({ error: error.message });
 	}
 }

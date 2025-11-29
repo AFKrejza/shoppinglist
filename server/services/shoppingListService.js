@@ -5,10 +5,19 @@ import { roleService, getRole } from "./roleService.js";
 import { ROLES } from "../config/roles.js";
 
 export const shoppingListService = {
-	async findById(id, ownerId) {
-		const list = await shoppingListDao.findById(id, ownerId);
+	async findById(id, userId) {
+		const list = await shoppingListDao.findById(id);
 		if (!list)
-			throw new Error("List not found or unauthorized");
+			throw new Error("List not found");
+
+		const isAdmin = await roleService(userId, ROLES.ADMIN);
+		const isOwner = list.ownerId === userId;
+		const isMember = list.memberList.includes(userId);
+
+		if (!isAdmin && !isOwner && !isMember)
+			throw new Error("Unauthorized");
+
+
 
 		return list;
 	},
@@ -114,7 +123,7 @@ export const shoppingListService = {
 
 	// TODO: all 3 remove functions still need privilege checks!
 	async remove(listId, userId) {
-		const existingList = await shoppingListDao.findList(listId);
+		const existingList = await shoppingListDao.findById(listId);
 
 		if (!existingList)
 			throw new Error("Shopping list not found");
@@ -134,7 +143,7 @@ export const shoppingListService = {
 
 	// members, the owner, and admins+ can use this
 	async removeItem(userId, listId, itemId) {
-		const existingList = await shoppingListDao.findList(listId);
+		const existingList = await shoppingListDao.findById(listId);
 		if (!existingList)
 			throw new Error("Shopping list not found");
 		
@@ -153,7 +162,7 @@ export const shoppingListService = {
 	},
 
 	async removeMember(userId, listId, memberId) {
-		const existingList = await shoppingListDao.findList(listId);
+		const existingList = await shoppingListDao.findById(listId);
 
 		if (!existingList)
 			throw new Error("Shopping list not found");
