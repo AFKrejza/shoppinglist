@@ -6,14 +6,14 @@ import { shoppingListRouter } from "./routes/shoppingLists.js";
 import { userRouter } from "./routes/users.js";
 import { authRouter } from "./routes/auth.js";
 import { connectDB } from "./config/db.js";
-import { setSuperAdmin } from "./config/seed.js";
+import { seedDatabase } from "./config/seed.js";
 
 dotenv.config();
 
 const app = express();
-connectDB();
+await connectDB();
 app.use(express.json());
-setSuperAdmin();
+await seedDatabase();
 
 const port = process.env.SERVER_PORT;
 
