@@ -3,6 +3,20 @@
 @USER_ID = 692863d386968134499e55d2
 @LIST_ID = 6929c52e1e7e93dbc491690c
 
+
+
+
+
+
+
+### WARNING: OUTDATED. USE INSOMNIA. ###
+
+
+
+
+
+
+
 ###
 GET {{URL}}/shoppinglists/{{LIST_ID}} HTTP/1.1
 Authorization: Bearer {{JWT}}

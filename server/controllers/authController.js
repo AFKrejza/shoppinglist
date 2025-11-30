@@ -29,13 +29,14 @@ async function login(req, res) {
 		const user = await User.findOne({ email });
 		if (!user)
 			return res.status(400).json({ message: "Invalid email" });
-
+		console.log(password, user.password);
 		const checkPassword = await comparePassword(password, user.password);
+		
 		if (!checkPassword)
 			return res.status(400).json({ message: "Invalid password" });
-
+		
 		const token = await generateToken({ id: user._id });
-
+		
 		res.json({message: "Logged in", token});
 	} catch (error) {
 		console.log(error);

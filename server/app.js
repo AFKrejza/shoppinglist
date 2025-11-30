@@ -1,6 +1,7 @@
 import mongoose, { connect } from "mongoose";
 import express from "express";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import { shoppingListRouter } from "./routes/shoppingLists.js";
 import { userRouter } from "./routes/users.js";
@@ -14,6 +15,10 @@ const app = express();
 await connectDB();
 app.use(express.json());
 await seedDatabase();
+app.use(cors({
+	origin: "http://localhost:3001", // client port, defined in client .env
+	credentials: true
+}));
 
 const port = process.env.SERVER_PORT;
 

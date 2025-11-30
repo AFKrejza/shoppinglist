@@ -42,6 +42,9 @@ export async function seedDatabase() {
 
 	const userId1 = new mongoose.Types.ObjectId();
 	const userId2 = new mongoose.Types.ObjectId();
+
+	const user1Password = "password";
+	const user2Password = "password";
 	
 	const listId1 = new mongoose.Types.ObjectId();
 	const listId2 = new mongoose.Types.ObjectId();
@@ -51,14 +54,14 @@ export async function seedDatabase() {
 			_id: userId1,
 			userName: "john",
 			email: "john@gmail.com",
-			password: "password",
+			password: await hashPassword(user1Password),
 			role: "USER"
 		},
 		{
 			_id: userId2,
 			userName: "sam",
 			email: "sam@gmail.com",
-			password: "password",
+			password: await hashPassword(user2Password),
 			role: "USER"
 		},
 	]);

@@ -4,6 +4,18 @@
 @JWT = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmFjOGI4OTNmNWE2MzMyOGI2ZmUwNCIsImlhdCI6MTc2NDQyNTk5NSwiZXhwIjoxNzY1MDMwNzk1fQ.aOvwpzCp48kSeYmZlioVFAw6xUHSt5m7iXOLz-TBO5k
 @JWT_SUPERADMIN = 
 
+
+
+
+
+
+
+### WARNING: OUTDATED. USE INSOMNIA. ###
+
+
+
+
+
 ### replace the token!
 POST {{URL}}/auth/login HTTP/1.1
 Content-Type: application/json
