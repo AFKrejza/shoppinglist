@@ -1,0 +1,670 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: shoppinglist
+meta:
+  id: wrk_8ad7947859c547e89554784398347234
+  created: 1764424919396
+  modified: 1764424919396
+  description: ""
+collection:
+  - name: auth
+    meta:
+      id: fld_8bb6a12b298045e78f36dc1964c5d5c9
+      created: 1764425334436
+      modified: 1764425334436
+      sortKey: -1764425334436
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/auth/login"
+        name: login
+        meta:
+          id: req_bd146c289db14ce6bf6bef67a0d06925
+          created: 1764424928930
+          modified: 1764425471094
+          isPrivate: false
+          description: ""
+          sortKey: -1764425349461
+        method: POST
+        body:
+          mimeType: application/json
+          text: |+
+            {
+            	"email": "john@gmail.com",
+            	"password": "password"
+            }
+
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: shoppinglist
+    meta:
+      id: fld_29ea7e8b7dce4073831c2fb3b45284c7
+      created: 1764425597302
+      modified: 1764425597302
+      sortKey: -1764425597302
+      description: ""
+    children:
+      - url: "{{ _.base_url }}/shoppinglists/{{ _.LISTID }}"
+        name: find one
+        meta:
+          id: req_75f1c427f5424adbb1a7631645f9073d
+          created: 1764425598915
+          modified: 1764437905634
+          isPrivate: false
+          description: ""
+          sortKey: -1764425608202
+        method: GET
+        body:
+          mimeType: application/json
+          text: ""
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/{{ _.LISTID }}"
+        name: update
+        meta:
+          id: req_ec4afc832d704018b8f7d18abf5aa2d3
+          created: 1764425894708
+          modified: 1764504147211
+          isPrivate: false
+          description: ""
+          sortKey: -1764425559299
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "patched name",
+            	"memberList": ["{{ _.SUPERADMIN_ID }}"],
+            	"itemList": [
+            		{
+            			"_id": "6929d81700985cac175e157f",
+            			"name": "test",
+            			"ticked": false
+            		},
+            		{
+            			"_id": "6929d81700985cac175e1580",
+            			"name": "UPDATED",
+            			"unit": "30",
+            			"ticked": true
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/listAll"
+        name: listAll
+        meta:
+          id: req_d5ad05f8819a445db88b63dd22ae7089
+          created: 1764426063499
+          modified: 1764426067748
+          isPrivate: false
+          description: ""
+          sortKey: -1764425583750.5
+        method: GET
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "New Shopping List"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/"
+        name: create
+        meta:
+          id: req_fdc5b2ed31124ba9b64fac6809fa6d37
+          created: 1764426082725
+          modified: 1764426108816
+          isPrivate: false
+          description: ""
+          sortKey: -1764425534847.5
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"name": "New Shopping List"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/{{LISTID}}"
+        name: delete
+        meta:
+          id: req_c20399598aa14ebfa0e6d8b26ad1a708
+          created: 1764426173120
+          modified: 1764426181988
+          isPrivate: false
+          description: ""
+          sortKey: -1764425522621.75
+        method: DELETE
+        body:
+          mimeType: application/json
+          text: ""
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/{{ _.LISTID }}/items/{{ITEMID}}"
+        name: delete Item
+        meta:
+          id: req_e8dfc806f54f449ca5cc6fcb842cf5e4
+          created: 1764437672019
+          modified: 1764438144568
+          isPrivate: false
+          description: ""
+          sortKey: -1764425436041.375
+        method: DELETE
+        body:
+          mimeType: application/json
+          text: ""
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/{{ _.LISTID }}/members/{{ _.MEMBERID }}"
+        name: delete Member
+        meta:
+          id: req_5629038e4cd645178e00a054d8b2e83d
+          created: 1764439273905
+          modified: 1764444780173
+          isPrivate: false
+          description: ""
+          sortKey: -1764425392751.1875
+        method: DELETE
+        body:
+          mimeType: application/json
+          text: ""
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/list"
+        name: get Page
+        meta:
+          id: req_6460782009164937bc2179dce4a9f4ea
+          created: 1764448779011
+          modified: 1764505857215
+          isPrivate: false
+          description: ""
+          sortKey: -1764425571524.75
+        method: GET
+        body:
+          mimeType: application/json
+          text: ""
+        parameters:
+          - name: page
+            value: "1"
+            description: ""
+          - name: pageSize
+            value: "10"
+            description: ""
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: "{{ _.base_url }}/shoppinglists/{{ _.LISTID }}"
+        name: update - items only
+        meta:
+          id: req_af8b4d982dd04edaabe0f1b0cf44cebe
+          created: 1764505902626
+          modified: 1764505978349
+          isPrivate: false
+          description: ""
+          sortKey: -1764425547073.25
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"itemList": [
+            		{
+            			"_id": "6929d81700985cac175e157f",
+            			"name": "test",
+            			"ticked": false
+            		},
+            		{
+            			"_id": "6929d81700985cac175e1580"
+            		}
+            	]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/8.6.1
+          - name: Authorization
+            value: "Bearer: {{JWT}}"
+            description: ""
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: user
+    meta:
+      id: fld_ae6b983eb2eb452db83a16280f419db8
+      created: 1764425602688
+      modified: 1764425602688
+      sortKey: -1764425602688
+      description: ""
+    children:
+      - name: superadmin
+        meta:
+          id: fld_3ef0807538f4487287c8a5d4ac462a68
+          created: 1764433025782
+          modified: 1764433025782
+          sortKey: -1764433025782
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/users/{{ _.USERID }}"
+            name: update
+            meta:
+              id: req_ef1fdb03ac3e4a22b7857f6525a8a1ca
+              created: 1764433041662
+              modified: 1764434534568
+              isPrivate: false
+              description: ""
+              sortKey: -1764433045736
+            method: PATCH
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"userName": "newname",
+                	"role": "SUPERADMIN"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+              - name: Authorization
+                value: "Bearer: {{ _.SUPERADMIN_JWT }}"
+                description: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/users/{{ _.USERID }}"
+            name: delete
+            meta:
+              id: req_ea92200f5a2c4b928cdb3ea232b07a70
+              created: 1764433051927
+              modified: 1764433556102
+              isPrivate: false
+              description: ""
+              sortKey: -1764433045836
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/8.6.1
+              - name: Authorization
+                value: "Bearer: {{ _.SUPERADMIN_JWT }}"
+                description: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/auth/login"
+            name: login
+            meta:
+              id: req_b8883178f8834be5ae786c770950ec60
+              created: 1764433092600
+              modified: 1764433100396
+              isPrivate: false
+              description: ""
+              sortKey: -1764433045936
+            method: POST
+            body:
+              mimeType: application/json
+              text: |+
+                {
+                	"email": "admin@admin.com",
+                	"password": "password"
+                }
+
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/auth/profile"
+            name: profile
+            meta:
+              id: req_4912005fb83940b3bfa9e6bde0e5f2ed
+              created: 1764433580496
+              modified: 1764433939318
+              isPrivate: false
+              description: ""
+              sortKey: -1764433046036
+            method: GET
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+              - name: Authorization
+                value: "Bearer: {{ _.SUPERADMIN_JWT }}"
+                description: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+      - name: user (john)
+        meta:
+          id: fld_a790a97066974ce5bacf372006f47988
+          created: 1764433137022
+          modified: 1764433137022
+          sortKey: -1764433137022
+          description: ""
+        children:
+          - url: "{{ _.base_url }}/auth/profile"
+            name: profile
+            meta:
+              id: req_b5f4d47fc70c4482a14059552810932a
+              created: 1764425421666
+              modified: 1764433202124
+              isPrivate: false
+              description: ""
+              sortKey: -1764433171268
+            method: GET
+            body:
+              mimeType: application/json
+              text: ""
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+              - name: Authorization
+                value: "Bearer: {{JWT}}"
+                description: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/auth/register"
+            name: register
+            meta:
+              id: req_186ae0ebb98e4d459c7db825363bff7b
+              created: 1764425510396
+              modified: 1764433628015
+              isPrivate: false
+              description: ""
+              sortKey: -1764433171368
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"userName": "john",
+                	"email": "john@gmail.com",
+                	"password": "password"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/users/{{ _.USERID }}"
+            name: delete
+            meta:
+              id: req_2b38df3f06534fa6975729004ed80021
+              created: 1764426272345
+              modified: 1764433171022
+              isPrivate: false
+              description: ""
+              sortKey: -1764433170968
+            method: DELETE
+            headers:
+              - name: User-Agent
+                value: insomnia/8.6.1
+              - name: Authorization
+                value: "Bearer: {{ _.JWT }}"
+                description: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/users/{{ _.USERID }}"
+            name: update
+            meta:
+              id: req_5c33176e6b9c4d00adc1cf0b197e510b
+              created: 1764426325464
+              modified: 1764433173522
+              isPrivate: false
+              description: ""
+              sortKey: -1764433171068
+            method: PATCH
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                	"userName": "newname",
+                	"password": "password"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+              - name: Authorization
+                value: "Bearer: {{ _.JWT }}"
+                description: ""
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+          - url: "{{ _.base_url }}/auth/login"
+            name: login
+            meta:
+              id: req_2e0248271ea743eba87b7fe54a7369a4
+              created: 1764433187781
+              modified: 1764433190284
+              isPrivate: false
+              description: ""
+              sortKey: -1764433171168
+            method: POST
+            body:
+              mimeType: application/json
+              text: |+
+                {
+                	"email": "john@gmail.com",
+                	"password": "password"
+                }
+
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: User-Agent
+                value: insomnia/8.6.1
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_0883521fca7886b3ea282e7f0477f6ad5ea131ae
+    created: 1764424919399
+    modified: 1764424919399
+environments:
+  name: Base Environment
+  meta:
+    id: env_0883521fca7886b3ea282e7f0477f6ad5ea131ae
+    created: 1764424919398
+    modified: 1764505884889
+    isPrivate: false
+  data:
+    base_url: http://localhost:3000
+    JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmIxZWRkNTg1NmVlYmM2ODA1Y2Y3ZCIsImlhdCI6MTc2NDQ0ODg4OSwiZXhwIjoxNzY1MDUzNjg5fQ.4dnugctwSZTaHA7BhjYKbQhuBO3HyOYJoRjze5cEJ_g
+    USERID: 692b1edd5856eebc6805cf7d
+    LISTID: 692c28038c6f5f424d1a6509
+    ITEMID: 692b4f6abc71b744b7043a68
+    MEMBERID: "555"
+    SUPERADMIN_JWT: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5MmIxZTQzNTg1NmVlYmM2ODA1Y2Y3OCIsImlhdCI6MTc2NDQzMzY3MCwiZXhwIjoxNzY1MDM4NDcwfQ.CCuFDEtwBBLPlPT7-9poLbK_anOZ-RxvhUONSSOcGjQ
+    SUPERADMIN_ID: 692b1e435856eebc6805cf78
