@@ -1,172 +1,26 @@
 import "./App.css";
 import { useState } from "react";
-import { Card, Row, Col, Modal, Button, Form } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button, Form, Navbar, Container } from "react-bootstrap";
+
+// TODO: comment out either one for real or mock data.
+// import { api } from "./api";
+import { api } from "./mockApi";
 
 function App() {
-  // sample data
-  const userList = [
-    {
-      id: 1,
-      name: "John",
-      email: "john@gmail.com",
-    },
-    {
-      id: 2,
-      name: "Sam",
-      email: "sam@gmail.com",
-    },
-    {
-      id: 3,
-      name: "Matthew",
-      email: "matthew@gmail.com",
-    },
-  ];
-
-  const shoppingListList = [
-    {
-      id: 1,
-      ownerId: 1,
-      name: "Groceries",
-      isArchived: false,
-      memberList: [1,2,3],
-      itemList: [
-        {
-          id: 1,
-          name: "apples",
-          quantity: "2",
-          unit: "kg",
-          ticked: false,
-        },
-        {
-          id: 2,
-          name: "milk",
-          quantity: "1",
-          unit: "l",
-          ticked: false,
-        },
-        {
-          id: 3,
-          name: "cheese",
-          quantity: "5",
-          unit: "", // empty string if no unit is specified
-          ticked: false,
-        },
-        {
-          id: 4,
-          name: "beer",
-          quantity: "30",
-          unit: "",
-          ticked: false,
-        },
-      ],
-    },
-    {
-      id: 2,
-      ownerId: 2,
-      name: "Plants",
-      isArchived: false,
-      memberList: [3],
-      itemList: [
-        {
-          id: 1,
-          name: "Cactus",
-          quantity: "1",
-          unit: "",
-          ticked: false,
-        },
-        {
-          id: 2,
-          name: "Orchid",
-          quantity: "3",
-          unit: "",
-          ticked: false,
-        },
-        {
-          id: 3,
-          name: "Rose",
-          quantity: "1",
-          unit: "",
-          ticked: false,
-        },
-      ],
-    },
-    {
-      id: 3,
-      ownerId: 1,
-      name: "Plants",
-      isArchived: false,
-      memberList: [1,3],
-      itemList: [
-        {
-          id: 1,
-          name: "Cactus",
-          quantity: "1",
-          unit: "",
-          ticked: false,
-        },
-        {
-          id: 2,
-          name: "Orchid",
-          quantity: "3",
-          unit: "",
-          ticked: false,
-        },
-        {
-          id: 3,
-          name: "Rose",
-          quantity: "1",
-          unit: "",
-          ticked: false,
-        },
-      ],
-    },
-	{
-      id: 4,
-      ownerId: 1,
-      name: "testarchived",
-      isArchived: true,
-      memberList: [1,2,3],
-      itemList: [
-        {
-          id: 1,
-          name: "apples",
-          quantity: "2",
-          unit: "kg",
-          ticked: false,
-        },
-        {
-          id: 2,
-          name: "milk",
-          quantity: "1",
-          unit: "l",
-          ticked: false,
-        },
-        {
-          id: 3,
-          name: "cheese",
-          quantity: "5",
-          unit: "", // empty string if no unit is specified
-          ticked: false,
-        },
-        {
-          id: 4,
-          name: "beer",
-          quantity: "30",
-          unit: "",
-          ticked: false,
-        },
-      ],
-    }
-  ];
 
   const [activeUser, setActiveUser] = useState(null);
-  const [activeShoppingList, setActiveShoppingList] = useState(null);
-  const [activeShoppingListList, setShoppingListList] = useState(shoppingListList);
+  const [activeShoppingList, setActiveShoppingList] = useState();
+  const [activeAllLists, setAllLists] = useState([]); // should only contain lists the user is allowed to view (backend: getPage)
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newListName, setNewListName] = useState("");
   const [showArchived, setShowArchived] = useState(false);
+  const [userList, setUserList] = useState([]); // for displaying member names
 
-  function DisplayShoppingList({ shoppingList }) {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authMode, setAuthMode] = useState("login");
+  const [jwt, setJwt] = useState(null);
+
+  function DisplayShoppingList({ shoppingList, allLists, activeUser }) {
     const listItems = shoppingList.itemList.map((item) => (
       <li key={item.id}>
         {item.name} - {item.quantity} {item.unit} {item.ticked} <button onClick={() => {
@@ -177,13 +31,13 @@ function App() {
 			};
 
 			setActiveShoppingList(updatedShoppingList);
-			const updatedListList = [...shoppingListList.filter((list) => list.id !== shoppingList.id), updatedShoppingList];
-			setShoppingListList(updatedListList);
+			const updatedListList = [...activeAllLists.filter((list) => list.id !== shoppingList.id), updatedShoppingList];
+			setAllLists(updatedListList);
 			}}>Remove</button>
       </li>
     ));
 	const listMemberIds = new Set(shoppingList.memberList);
-	let listMembers = userList.filter(
+	let listMembers = activeShoppingList.memberList.filter(
 		(user) => listMemberIds.has(user.id)
 	);
 	listMembers = listMembers.map((user) => (
@@ -196,8 +50,8 @@ function App() {
 					};
 					setActiveShoppingList(updatedList);
 
-					const updatedListList = [...shoppingListList.filter((list) => list.id !== shoppingList.id), updatedList];
-					setShoppingListList(updatedListList);
+					const updatedListList = [...activeAllLists.filter((list) => list.id !== shoppingList.id), updatedList];
+					setAllLists(updatedListList);
 				}
 			}}>Remove</button>
 			{user.name}
@@ -206,20 +60,21 @@ function App() {
     return [listItems, listMembers];
   }
 
-  const listUsers = userList.map((user) => (
-    <li key={user.id}>
-      <button
-        onClick={() => {
-          setActiveUser(user);
-          setActiveShoppingList(null);
-          console.log(user.id);
-        }}
-      >
-        Log in
-      </button>
-      {user.name} | {user.email}
-    </li>
-  ));
+  // issue here with the member list
+//   const listUsers = activeShoppingList.userList.map((user) => (
+//     <li key={user.id}>
+//       <button
+//         onClick={() => {
+//           setActiveUser(user);
+//           setActiveShoppingList(null);
+//           console.log(user.id);
+//         }}
+//       >
+//         Log in
+//       </button>
+//       {user.name} | {user.email}
+//     </li>
+//   ));
 
   function ShoppingListTiles({ shoppingLists, onSelect, onCreate, onDelete, onArchiveToggle }) {
 	return (
@@ -283,9 +138,123 @@ function CreateList({ onClick }) {
 	);
 }
 
+function LoginForm({ onSubmit }) {
+	return (
+		<Form onSubmit={(e) => {
+			e.preventDefault();
+			const email = e.target.formBasicEmail.value;
+			const password = e.target.formBasicPassword.value;
+			onSubmit(e, email, password);
+		}}>
+			<Form.Group className= "mb-3" controlId="formBasicEmail">
+				<Form.Label>Email address</Form.Label>
+				<Form.Control type="email" placeholder="Enter email" />
+			</Form.Group>
+			<Form.Group className="mb-3"
+			controlId="formBasicPassword">
+				<Form.Label>Password</Form.Label>
+				<Form.Control type="password" placeholder="Password" />
+			</Form.Group>
+			<Button variant="primary" type="submit">
+				Log in
+			</Button>
+		</Form>
+	)
+}
+
+function RegisterForm({ onSubmit }) {
+	return (
+		<Form onSubmit={onSubmit}>
+			<Form.Group className= "mb-3" controlId="formBasicEmail">
+				<Form.Label>Email address</Form.Label>
+				<Form.Control type="email" placeholder="Enter email" />
+			</Form.Group>
+			<Form.Group className= "mb-3" controlId="formBasicName">
+				<Form.Label>User Name</Form.Label>
+				<Form.Control type="name" placeholder="Enter user name" />
+			</Form.Group>
+			<Form.Group className="mb-3"
+			controlId="formBasicPassword">
+				<Form.Label>Password</Form.Label>
+				<Form.Control type="password" placeholder="Password" />
+			</Form.Group>
+			<Button variant="primary" type="submit">
+				Log in
+			</Button>
+		</Form>
+	)
+}
+
+  function openLogin() {
+	setAuthMode("login");
+	setShowAuthModal(true);
+  }
+
+  function openRegister() {
+	setAuthMode("register");
+	setShowAuthModal(true);
+  }
+
+  async function handleLogin(event, email, password) {
+	event.preventDefault();
+
+	try {
+		const res = await api.auth.login(email, password);
+		const jwt = res.token;
+		setJwt(jwt);
+		console.log(`JWT: ${jwt}`);
+		await loadUserProfile(jwt);
+		await loadShoppingLists(jwt);
+		setShowAuthModal(false);
+	} catch (error) {
+		alert("Login failed");
+	}
+  }
+
+	async function loadShoppingLists(jwt) {
+		const lists = await api.lists.getPage(jwt, 1, 10);
+		console.log(lists[0]);
+		setAllLists(lists);
+  }
+
+  async function loadUserProfile(jwt) {
+	const profile = await api.auth.profile(jwt);
+	setActiveUser(profile);
+  }
+
+  function handleRegister(event) {
+	event.preventDefault();
+
+	// TODO: call server here
+	console.log("Register submit");
+
+	// TODO: mock this server call properly
+	// const user = userList[0];
+	// setActiveUser(user);
+	setShowAuthModal(false);
+  }
+
+
   return (
     <div className="App">
-      <div>{!activeUser && listUsers}</div>
+		<Navbar bg="light" className="justify-content-end px-3">
+  			{!activeUser && (
+				<>
+					<Button variant="outline-primary" onClick={openLogin} className="me-2">
+						Login
+					</Button>
+					<Button variant="primary" onClick={openRegister}>
+						Sign Up
+					</Button>
+				</>
+  			)}
+			{activeUser && (
+				<Button variant="danger" onClick={() => setActiveUser(null)}>
+				Log Out
+				</Button>
+			)}
+		</Navbar>
+      <div>{!activeUser }</div>
       <div>
         {activeUser && (
 			<div>
@@ -295,12 +264,9 @@ function CreateList({ onClick }) {
         )}
       </div>
       <div>{activeUser && <ShoppingListTiles
-	 	shoppingLists={activeShoppingListList
-		.filter(
-			(shoppingList) =>
-				shoppingList.ownerId === activeUser.id ||
-			shoppingList.memberList.includes(activeUser.id)
-		)
+	  // activeAllLists is already filtered to
+	  // what the user is allowed to see
+	 	shoppingLists={activeAllLists
 		.filter(shoppingList => showArchived ? true : !shoppingList.isArchived)	
 	}
 		onSelect={(list) => {
@@ -309,19 +275,19 @@ function CreateList({ onClick }) {
 		}}
 		onCreate={() => setShowCreateModal(true)}
 		onDelete={(list) => {
-			const updated = activeShoppingListList.filter(
+			const updated = activeAllLists.filter(
 				(l) => l.id !== list.id
 			);
-			setShoppingListList(updated);
+			setAllLists(updated);
 			if (activeShoppingList?.id === list.id) {
 				setActiveShoppingList(null);
 			}}
 		}
 			onArchiveToggle={(list) => {
-				const updated = activeShoppingListList.map((l) => 
+				const updated = activeAllLists.map((l) => 
 					l.id === list.id ? {...l, isArchived: !l.isArchived } : l
 				);
-				setShoppingListList(updated);
+				setAllLists(updated);
 				if (activeShoppingList?.id === list.id) {
 					setActiveShoppingList({...list, isArchived: !list.isArchived});
 				}
@@ -359,20 +325,35 @@ function CreateList({ onClick }) {
 			onClick={() => {
 				if (!newListName.trim()) return;
 				const newList = {
-					id: Math.max(...activeShoppingListList.map(l => l.id)) + 1,
+					id: Math.max(...activeAllLists.map(l => l.id)) + 1,
 					ownerId: activeUser.id,
 					name: newListName,
 					isArchived: false,
 					memberList: [activeUser.id],
 					itemList: []
 				};
-				setShoppingListList([...activeShoppingListList, newList]);
+				setAllLists([...activeAllLists, newList]);
 				setNewListName("");
 				setShowCreateModal(false);
 			}}
 			>Create</Button>
 		</Modal.Footer>
 	</Modal>
+
+	<Modal show={showAuthModal} onHide={() => setShowAuthModal(false)}>
+  		<Modal.Header closeButton>
+    		<Modal.Title>
+    			{authMode === "login" ? "Log In" : "Sign Up"}
+    		</Modal.Title>
+  		</Modal.Header>
+  <Modal.Body>
+    {authMode === "login" ? (
+      <LoginForm onSubmit={handleLogin} />
+    ) : (
+      <RegisterForm onSubmit={handleRegister} />
+    )}
+  </Modal.Body>
+</Modal>
     </div>
   );
 }
