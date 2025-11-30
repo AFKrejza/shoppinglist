@@ -1,5 +1,4 @@
 import { User } from "../models/User.js";
-import { ROLES } from "./roles.js";
 import { hashPassword } from "../services/hashService.js";
 
 // this should run on each server start
@@ -26,3 +25,5 @@ export async function setSuperAdmin() {
 		close();
 	}
 }
+
+// add seed data

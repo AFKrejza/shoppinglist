@@ -8,6 +8,10 @@ const shoppingListRouter = express.Router();
 
 shoppingListRouter.get("/listAll", authMiddleware, authRole(ROLES.ADMIN), shoppingListController.listAll);
 
+// get a page of shopping lists that the user is a member or owner of
+// takes page & pageSize query parameters
+shoppingListRouter.get("/list", authMiddleware, shoppingListController.getPage);
+
 shoppingListRouter.put("/", authMiddleware, shoppingListController.create);
 
 shoppingListRouter.delete("/:id/items/:itemId", authMiddleware, shoppingListController.removeItem);

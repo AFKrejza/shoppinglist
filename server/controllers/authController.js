@@ -9,12 +9,12 @@ async function register(req, res) {
 		const existingUser = await User.findOne({ email });
 		if (existingUser) {
 			console.log("User already exists!");
-			return res.status(400).json({ message: "User already exists!" }); // TODO: standardize error handling
+			return res.status(400).json({ message: "User already exists!" });
 		}
 			
 		const hashedPassword = await hashPassword(password);
 		const user = new User({ userName, email, password: hashedPassword });
-		await user.save(); // TODO: add verification that the user exists (like RETURN in postgres)
+		await user.save();
 		console.log(`User ${email} registered`);
 		res.status(201).json({ message: "User registered. Please log in."});
 	} catch (error) {

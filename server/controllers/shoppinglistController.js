@@ -13,6 +13,7 @@ async function findById(req, res) {
 }
 
 // note: page size change must reset page to 1 on the frontend, else it'll skip some
+// returns an empty array if none are found
 async function getPage(req, res) {
 	try{
 		const page = Number(req.query.page) || 1;
@@ -55,16 +56,13 @@ async function create(req, res) {
 	}
 }
 
-// TODO: members, owner, and admins should only be allowed to change certain things
 // this function can ONLY modify and create, it CANNOT delete stuff.
-// create proper subcontrollers or other ways to do it.
+// use remove, removeItem and removeMember instead.
 async function update(req, res) {
 	try {
 		const listId = req.params.id;
 		const userId = req.user.id;
 		const updatedList = await shoppingListService.update(listId, userId, req.body);
-		// if (!updatedList)
-		// 	return res.status(404).json({ message: "List not found or unauthorized"});
 
 		return res.status(200).json(updatedList);
 	} catch (error) {
