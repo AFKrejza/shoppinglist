@@ -26,6 +26,8 @@ app.use("/auth", authRouter);
 app.use("/shoppinglists", shoppingListRouter);
 app.use("/users", userRouter);
 
-app.listen(port, () => {
-	console.log(`Server running on port ${port}`);
-})
+// app.listen(port, () => {
+// 	console.log(`Server running on port ${port}`);
+// })
+
+export default app;
