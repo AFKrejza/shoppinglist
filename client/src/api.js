@@ -70,11 +70,14 @@ export const api = {
 			return res.json();
 		},
 
-		async addShoppingList(list) {
-			const res = await fetch(`${listsUrl}/shoppingLists`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(list),
+		async addShoppingList(jwt, name) {
+			const res = await fetch(`${listsUrl}`, {
+				method: "PUT",
+				headers: { 
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${jwt}`
+				},
+				body: JSON.stringify({name}),
   			});
 			if (!res.ok) throw new Error("Failed to add shopping list");
 			return res.json();

@@ -1,10 +1,10 @@
 import "./App.css";
-import { useState } from "react";
-import { Card, Row, Col, Modal, Button, Form, Navbar, Container } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Card, Row, Col, Modal, Button, Form, Navbar, Container, Table } from "react-bootstrap";
 
 // TODO: comment out either one for real or mock data.
 // import { api } from "./api";
-import { api } from "./mockApi";
+import { api } from "./api";
 
 function App() {
 
@@ -20,45 +20,77 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [jwt, setJwt] = useState(null);
 
-  function DisplayShoppingList({ shoppingList, allLists, activeUser }) {
-    const listItems = shoppingList.itemList.map((item) => (
-      <li key={item.id}>
-        {item.name} - {item.quantity} {item.unit} {item.ticked} <button onClick={() => {
-			item.ticked = true;
-			const updatedShoppingList = {
-				...shoppingList,
-				itemList: shoppingList.itemList.filter((items) => items !== item)
-			};
 
-			setActiveShoppingList(updatedShoppingList);
-			const updatedListList = [...activeAllLists.filter((list) => list.id !== shoppingList.id), updatedShoppingList];
-			setAllLists(updatedListList);
-			}}>Remove</button>
-      </li>
-    ));
-	const listMemberIds = new Set(shoppingList.memberList);
-	let listMembers = activeShoppingList.memberList.filter(
-		(user) => listMemberIds.has(user.id)
-	);
-	listMembers = listMembers.map((user) => (
-		<li key={user.id}>
-			<button onClick={() => {
-				if (activeUser.id === activeShoppingList.ownerId || activeUser.id === user.id) {
-					const updatedList = {
-						...shoppingList,
-						memberList: shoppingList.memberList.filter((id) => id !== user.id)
-					};
-					setActiveShoppingList(updatedList);
-
-					const updatedListList = [...activeAllLists.filter((list) => list.id !== shoppingList.id), updatedList];
-					setAllLists(updatedListList);
-				}
-			}}>Remove</button>
-			{user.name}
-		</li>
-	));
-    return [listItems, listMembers];
+  useEffect(() => {
+  const storedJwt = localStorage.getItem("jwt");
+  if (storedJwt) {
+    setJwt(storedJwt);
+    loadUserProfile(storedJwt);
+    loadShoppingLists(storedJwt);
   }
+}, []);
+
+  function DisplayShoppingList({ shoppingList, activeUser }) {
+
+  const handleRemoveItem = (itemId) => {
+    const updatedShoppingList = {
+      ...shoppingList,
+      itemList: shoppingList.itemList.filter(item => item.id !== itemId)
+    };
+
+    setActiveShoppingList(updatedShoppingList);
+    setAllLists(prev =>
+      prev.map(list =>
+        list.id === shoppingList.id ? updatedShoppingList : list
+      )
+    );
+  };
+
+  return (
+    <>
+      <h4>{shoppingList.name}</h4>
+
+      <Table striped bordered hover size="sm">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Unit</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {shoppingList.itemList.length === 0 && (
+            <tr>
+              <td colSpan="5" className="text-center text-muted">
+                No items yet
+              </td>
+            </tr>
+          )}
+
+          {shoppingList.itemList.map(item => (
+            <tr key={item.id}>
+              <td>{item.name}</td>
+              <td>{item.quantity}</td>
+              <td>{item.unit}</td>
+              <td>{item.ticked ? "✓" : ""}</td>
+              <td>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleRemoveItem(item.id)}
+                >
+                  Remove
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </>
+  );
+}
 
   // issue here with the member list
 //   const listUsers = activeShoppingList.userList.map((user) => (
@@ -202,6 +234,7 @@ function RegisterForm({ onSubmit }) {
 		const res = await api.auth.login(email, password);
 		const jwt = res.token;
 		setJwt(jwt);
+		localStorage.setItem("jwt", jwt);
 		console.log(`JWT: ${jwt}`);
 		await loadUserProfile(jwt);
 		await loadShoppingLists(jwt);
@@ -212,6 +245,7 @@ function RegisterForm({ onSubmit }) {
   }
 
 	async function loadShoppingLists(jwt) {
+		if (!jwt) return;
 		const lists = await api.lists.getPage(jwt, 1, 10);
 		console.log(lists[0]);
 		setAllLists(lists);
@@ -249,7 +283,13 @@ function RegisterForm({ onSubmit }) {
 				</>
   			)}
 			{activeUser && (
-				<Button variant="danger" onClick={() => setActiveUser(null)}>
+				<Button variant="danger" onClick={() => {
+					setActiveUser(null);
+					setJwt(null);
+					setAllLists([]);
+					setActiveShoppingList(null);
+					localStorage.removeItem("jwt");
+				}}>
 				Log Out
 				</Button>
 			)}
@@ -321,22 +361,29 @@ function RegisterForm({ onSubmit }) {
 				Cancel
 			</Button>
 			<Button
-			variant="primary"
-			onClick={() => {
-				if (!newListName.trim()) return;
-				const newList = {
-					id: Math.max(...activeAllLists.map(l => l.id)) + 1,
-					ownerId: activeUser.id,
-					name: newListName,
-					isArchived: false,
-					memberList: [activeUser.id],
-					itemList: []
-				};
-				setAllLists([...activeAllLists, newList]);
-				setNewListName("");
-				setShowCreateModal(false);
-			}}
-			>Create</Button>
+				variant="primary"
+				onClick={async () => {
+					if (!newListName.trim()) return;
+
+					try {
+					// Call backend to create new shopping list
+					const savedList = await api.lists.addShoppingList(jwt, newListName);
+
+					// Update frontend state
+					setAllLists(prev => [...prev, savedList]);
+					setActiveShoppingList(savedList);
+
+					// Clear input & close modal
+					setNewListName("");
+					setShowCreateModal(false);
+					} catch (err) {
+					console.error(err);
+					alert("Failed to create shopping list. Please try again.");
+					}
+				}}
+				>
+				Create
+			</Button>
 		</Modal.Footer>
 	</Modal>
 
