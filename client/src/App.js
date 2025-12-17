@@ -20,36 +20,88 @@ function App() {
   const [authMode, setAuthMode] = useState("login");
   const [jwt, setJwt] = useState(null);
 
+	const [showAddItemModal, setShowAddItemModal] = useState(false);
+	const [newItemName, setNewItemName] = useState("");
+	const [newItemQty, setNewItemQty] = useState(1);
+	const [newItemUnit, setNewItemUnit] = useState("");
 
-  useEffect(() => {
+
+useEffect(() => {
   const storedJwt = localStorage.getItem("jwt");
   if (storedJwt) {
     setJwt(storedJwt);
-    loadUserProfile(storedJwt);
-    loadShoppingLists(storedJwt);
+    loadUserProfile(storedJwt).catch(() => {});
+    loadShoppingLists(storedJwt).catch(() => {});
   }
 }, []);
 
   function DisplayShoppingList({ shoppingList, activeUser }) {
 
-  const handleRemoveItem = (itemId) => {
-    const updatedShoppingList = {
-      ...shoppingList,
-      itemList: shoppingList.itemList.filter(item => item.id !== itemId)
-    };
+	const handleRemoveItem = async (itemId) => {
+		try {
+			const res = await api.lists.removeItem(jwt, shoppingList._id, itemId)
+			console.log(itemId);
+			const updatedList = res || {
+				...shoppingList,
+				itemList: shoppingList.itemList.filter(item => item._id !== itemId)
+			}
+			setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+			prev.map(list => list._id === shoppingList._id ? updatedList : list)
+			);
+		} catch (err) {
+			console.error(err);
+			alert("Failed to remove item");
+		}
+	};
 
-    setActiveShoppingList(updatedShoppingList);
-    setAllLists(prev =>
-      prev.map(list =>
-        list.id === shoppingList.id ? updatedShoppingList : list
+	const handleToggleItem = async (itemId) => {
+  try {
+    const updatedList = await api.lists.updateItem(jwt, shoppingList._id, {
+      itemList: shoppingList.itemList.map(item =>
+        item._id === itemId ? { ...item, ticked: !item.ticked } : item
       )
+    });
+
+    setActiveShoppingList(updatedList);
+    setAllLists(prev =>
+      prev.map(list => list._id === shoppingList._id ? updatedList : list)
     );
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Failed to update item status");
+  }
+};
+  
+
+  	// owner or member themselves
+	const handleRemoveMember = async (memberId) => {
+		if (activeUser.id !== shoppingList.ownerId && activeUser.id !== memberId) return;
+
+		try {
+			const updatedList = await api.lists.removeMember(jwt, shoppingList.id, memberId);
+
+			setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+			prev.map(list => list.id === shoppingList.id ? updatedList : list)
+			);
+		} catch (err) {
+			console.error(err);
+			alert("Failed to remove member");
+		}
+	};
+
+  // id to user objects for the bottom table
+  const members = shoppingList.memberList
+    .map(id => userList.find(u => u._id === id))
+    .filter(Boolean);
 
   return (
     <>
       <h4>{shoppingList.name}</h4>
-
+<Button variant="primary" size="sm" onClick={() => setShowAddItemModal(true)}>
+  + Add Item
+</Button>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
@@ -70,16 +122,22 @@ function App() {
           )}
 
           {shoppingList.itemList.map(item => (
-            <tr key={item.id}>
+            <tr key={item._id}>
               <td>{item.name}</td>
               <td>{item.quantity}</td>
               <td>{item.unit}</td>
-              <td>{item.ticked ? "✓" : ""}</td>
+              <td className="text-center">
+				<Form.Check
+					type="checkbox"
+					checked={item.ticked}
+					onChange={() => handleToggleItem(item._id)}
+				/>
+				</td>
               <td>
                 <Button
                   variant="outline-danger"
                   size="sm"
-                  onClick={() => handleRemoveItem(item.id)}
+                  onClick={() => handleRemoveItem(item._id)}
                 >
                   Remove
                 </Button>
@@ -88,6 +146,43 @@ function App() {
           ))}
         </tbody>
       </Table>
+
+		  <h5>Members</h5>
+      <Table striped bordered hover size="sm">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Remove</th>
+          </tr>
+        </thead>
+        <tbody>
+          {members.length === 0 && (
+            <tr>
+              <td colSpan="3" className="text-center text-muted">
+                No members
+              </td>
+            </tr>
+          )}
+          {members.map(member => (
+            <tr key={member.id}>
+              <td>{member.name}</td>
+              <td>{member.email}</td>
+              <td>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleRemoveMember(member.id)}
+                  disabled={activeUser._id !== shoppingList.ownerId && activeUser._id !== member._id}
+                >
+                  Remove
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
     </>
   );
 }
@@ -252,6 +347,7 @@ function RegisterForm({ onSubmit }) {
   }
 
   async function loadUserProfile(jwt) {
+	if (!jwt) return;
 	const profile = await api.auth.profile(jwt);
 	setActiveUser(profile);
   }
@@ -307,7 +403,7 @@ function RegisterForm({ onSubmit }) {
 	  // activeAllLists is already filtered to
 	  // what the user is allowed to see
 	 	shoppingLists={activeAllLists
-		.filter(shoppingList => showArchived ? true : !shoppingList.isArchived)	
+		.filter(shoppingList => shoppingList && (showArchived ? true : !shoppingList.isArchived))
 	}
 		onSelect={(list) => {
 			setActiveShoppingList(list);
@@ -400,6 +496,79 @@ function RegisterForm({ onSubmit }) {
       <RegisterForm onSubmit={handleRegister} />
     )}
   </Modal.Body>
+</Modal>
+<Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>Add Item</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form>
+      <Form.Group className="mb-3">
+        <Form.Label>Item Name</Form.Label>
+        <Form.Control
+          type="text"
+          value={newItemName}
+          onChange={(e) => setNewItemName(e.target.value)}
+          placeholder="Enter item name"
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Quantity</Form.Label>
+        <Form.Control
+          type="number"
+          value={newItemQty}
+          onChange={(e) => setNewItemQty(e.target.value)}
+          min="1"
+        />
+      </Form.Group>
+      <Form.Group className="mb-3">
+        <Form.Label>Unit</Form.Label>
+        <Form.Control
+          type="text"
+          value={newItemUnit}
+          onChange={(e) => setNewItemUnit(e.target.value)}
+          placeholder="e.g. pcs, kg, liters"
+        />
+      </Form.Group>
+    </Form>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowAddItemModal(false)}>
+      Cancel
+    </Button>
+    <Button
+      variant="primary"
+      onClick={async () => {
+        if (!newItemName.trim()) return;
+
+        try {
+          // send new item to backend
+          const updatedList = await api.lists.updateItem(jwt, activeShoppingList._id, {
+            itemList: [
+              ...activeShoppingList.itemList,
+              { name: newItemName, quantity: newItemQty, unit: newItemUnit, ticked: false }
+            ]
+          });
+
+          setActiveShoppingList(updatedList);
+          setAllLists(prev =>
+            prev.map(list => list._id === activeShoppingList._id ? updatedList : list)
+          );
+
+          // clear input & close modal
+          setNewItemName("");
+          setNewItemQty(1);
+          setNewItemUnit("");
+          setShowAddItemModal(false);
+        } catch (err) {
+          console.error(err);
+          alert("Failed to add item");
+        }
+      }}
+    >
+      Add Item
+    </Button>
+  </Modal.Footer>
 </Modal>
     </div>
   );
