@@ -26,6 +26,14 @@ function App() {
 	const [newItemQty, setNewItemQty] = useState(1);
 	const [newItemUnit, setNewItemUnit] = useState("");
 
+	const [theme, setTheme] = useState(
+		localStorage.getItem("theme") || "light"
+	);
+	useEffect(() => {
+		document.documentElement.setAttribute("data-theme", theme);
+		localStorage.setItem("theme", theme);
+	}, [theme]);
+
 
 	useEffect(() => {
 	const storedJwt = localStorage.getItem("jwt");
@@ -104,7 +112,10 @@ function App() {
 		{ name: "Solved", value: solvedCount },
 		{name: "Unsolved", value: unsolvedCount}
 	];
-	const COLORS = ["#00ff00", "#ff0000"];
+	const COLORS = [
+		"var(--chart-solved)",
+		"var(--chart-unsolved)"
+	];
 
   return (
     <>
@@ -178,7 +189,14 @@ function App() {
 				/>
 			))}
 			</Pie>
-			<Tooltip />
+			<Tooltip
+				contentStyle={{
+					backgroundColor: "var(--bg-card)",
+					borderColor: "var(--border)",
+					color: "var(--text)"
+				}}
+			/>
+
 			<Legend />
 		</PieChart>
 		</ResponsiveContainer>
@@ -230,22 +248,6 @@ function App() {
   );
 }
 
-  // issue here with the member list
-//   const listUsers = activeShoppingList.userList.map((user) => (
-//     <li key={user.id}>
-//       <button
-//         onClick={() => {
-//           setActiveUser(user);
-//           setActiveShoppingList(null);
-//           console.log(user.id);
-//         }}
-//       >
-//         Log in
-//       </button>
-//       {user.name} | {user.email}
-//     </li>
-//   ));
-
   function ShoppingListTiles({ shoppingLists, onSelect, onCreate, onDelete, onArchiveToggle }) {
 	return (
 		<Row xs={1} sm={2} md={3} lg={4} className="g-4 p-3">
@@ -278,7 +280,7 @@ function App() {
 							)}
 						<Card.Body>
 							<Card.Title>{list.name}</Card.Title>
-							<Card.Subtitle className="text-muted mb-2">
+							<Card.Subtitle className="text-center">
 								{list.itemList.length} items
 							</Card.Subtitle>
 							<div>
@@ -410,7 +412,14 @@ function RegisterForm({ onSubmit }) {
 
   return (
     <div className="App">
-		<Navbar bg="light" className="justify-content-end px-3">
+		<Navbar className="justify-content-end px-3">
+			<Button
+				variant="outline-secondary"
+				className="me-2"
+				onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+				>
+				{theme === "light" ? "dark" : "light"}
+			</Button>
   			{!activeUser && (
 				<>
 					<Button variant="outline-primary" onClick={openLogin} className="me-2">
@@ -419,6 +428,7 @@ function RegisterForm({ onSubmit }) {
 					<Button variant="primary" onClick={openRegister}>
 						Sign Up
 					</Button>
+
 				</>
   			)}
 			{activeUser && (
