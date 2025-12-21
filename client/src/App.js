@@ -298,7 +298,7 @@ function RegisterForm({ onSubmit }) {
       <div>
         {activeUser && (
 			<div>
-			<button onClick={() => setShowArchived(!showArchived)}>{t("toggleArchived")}</button>
+			{/* <button onClick={() => setShowArchived(!showArchived)}>{t("toggleArchived")}</button> */}
 		  </div>
         )}
       </div>

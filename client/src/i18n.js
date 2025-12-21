@@ -27,7 +27,8 @@ const resources = {
 			create: "Create",
 			cancel: "Cancel",
 			dark: "Dark",
-			light: "Light"
+			light: "Light",
+			listName: "List name"
 		}
 	},
 	cs: {
@@ -55,7 +56,8 @@ const resources = {
 			create: "Vytvorit",
 			cancel: "Zrusit",
 			dark: "Tmavy",
-			light: "Svetly"
+			light: "Svetly",
+			listName: "Jmeno seznamu"
 		}
 	}
 };
