@@ -46,6 +46,24 @@ export const api = {
 		},
 	},
 
+	users: {
+		async findById(jwt, id) {
+			console.log(`ID: ${id}`);
+			const res = await fetch(`${usersUrl}/${id}`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${jwt}`
+				}
+			});
+
+			if (!res.ok)
+				throw new Error(`Failed to fetch user ${id}`);
+
+			return res.json();
+		}
+	},
+
 	lists: {
 		// async listAll() {
 		// 	const path = listsUrl + `/listAll`;
@@ -70,16 +88,77 @@ export const api = {
 			return res.json();
 		},
 
-		async addShoppingList(list) {
-			const res = await fetch(`${listsUrl}/shoppingLists`, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(list),
+		async addShoppingList(jwt, name) {
+			const res = await fetch(`${listsUrl}`, {
+				method: "PUT",
+				headers: { 
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${jwt}`
+				},
+				body: JSON.stringify({name}),
   			});
 			if (!res.ok) throw new Error("Failed to add shopping list");
 			return res.json();
 		},
 
+		// data can include partial data (check backend)
+		async updateShoppingList(jwt, listId, data) {
+			const res = await fetch(`${listsUrl}/${listId}`, {
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${jwt}`
+				},
+				body: JSON.stringify(data)
+			});
+
+			if (!res.ok)
+				throw new Error("Failed to update shopping list");
+
+			return res.json(); // should return updated list
+		},
+
+		async updateItem(jwt, listId, itemData) {
+			const res = await fetch(`${listsUrl}/${listId}`, {
+			method: "PATCH",
+			headers: {
+				"Content-Type": "application/json",
+				"Authorization": `Bearer ${jwt}`
+			},
+			body: JSON.stringify(itemData) // { itemList: [...] }
+			});
+			if (!res.ok) throw new Error("Failed to update/create item");
+			return res.json();
+		},
+
+		 async removeItem(jwt, listId, itemId) {
+			const res = await fetch(`${listsUrl}/${listId}/items/${itemId}`, {
+				method: "DELETE",
+				headers: { "Authorization": `Bearer ${jwt}` }
+			});
+			console.log(res);
+			if (!res.ok)
+				throw new Error("Failed to remove item");
+
+			// this is stupid but it just needs to work. Messed up the status codes
+			 if (res.status === 200 || res.status === 201) {
+				try {
+					return await res.json();
+				} catch {
+					return null;
+				}
+			}
+  			return null;
+		},
+
+		async removeMember(jwt, listId, memberId) {
+			const res = await fetch(`${listsUrl}/${listId}/members/${memberId}`, {
+			method: "DELETE",
+			headers: { "Authorization": `Bearer ${jwt}` }
+			});
+			if (!res.ok) throw new Error("Failed to remove member");
+			return res.json();
+		},
 
 	}
 

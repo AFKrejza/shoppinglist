@@ -101,7 +101,7 @@ export async function seedDatabase() {
 			_id: listId2,
 			ownerId: userId2,
 			name: "Clothes",
-			memberList: [],
+			memberList: [userId1.toString()],
 			itemList: [
 				{
 					_id: new mongoose.Types.ObjectId(),

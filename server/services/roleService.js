@@ -3,7 +3,7 @@ import { ROLES } from "../config/roles.js";
 
 export async function roleService(userId, minRole) {
 	const user = await userDao.findById({_id: userId });
-	console.log(user);
+	// console.log(user);
 	if (ROLES[user.role] < minRole)
 		return false;
 

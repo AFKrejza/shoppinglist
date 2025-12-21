@@ -36,3 +36,89 @@
     transform: rotate(360deg);
   }
 }
+
+/* ===========================
+   THEME VARIABLES
+=========================== */
+
+:root {
+  --bg: #ffffff;
+  --bg-card: #f8f9fa;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+
+  --chart-solved: #28a745;
+  --chart-unsolved: #dc3545;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --bg-card: #1e1e1e;
+  --text: #f8f9fa;
+  --text-muted: #adb5bd;
+  --border: #2c2c2c;
+
+  --chart-solved: #51cf66;
+  --chart-unsolved: #ff6b6b;
+}
+
+
+/* this should overwrite them */
+body {
+  background-color: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+.card {
+  background-color: var(--bg-card) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.table {
+  background-color: var(--table-bg) !important;
+  color: var(--text) !important;
+}
+
+.table thead,
+.table tbody,
+.table th,
+.table td {
+  background-color: var(--table-bg) !important;
+  color: var(--text) !important;
+  border-color: var(--border) !important;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: var(--table-striped) !important;
+}
+
+.table-hover > tbody > tr:hover > * {
+  background-color: var(--table-hover) !important;
+}
+
+.modal-content {
+  background-color: var(--bg-card) !important;
+  color: var(--text) !important;
+}
+
+.navbar {
+  background-color: var(--bg-card) !important;
+}
+
+.text-muted {
+  color: var(--text-muted) !important;
+}
+
+:root {
+  --table-bg: #ffffff;
+  --table-striped: #f2f2f2;
+  --table-hover: #e9ecef;
+}
+
+[data-theme="dark"] {
+  --table-bg: #1e1e1e;
+  --table-striped: #252525;
+  --table-hover: #2c2c2c;
+}

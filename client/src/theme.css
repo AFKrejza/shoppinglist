@@ -1,0 +1,57 @@
+:root {
+  --bg: #ffffff;
+  --bg-card: #f8f9fa;
+  --text: #212529;
+  --text-muted: #6c757d;
+  --border: #dee2e6;
+
+  --primary: #0d6efd;
+  --success: #28a745;
+  --danger: #dc3545;
+
+  --chart-solved: #28a745;
+  --chart-unsolved: #dc3545;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --bg-card: #1e1e1e;
+  --text: #f8f9fa;
+  --text-muted: #adb5bd;
+  --border: #2c2c2c;
+
+  --primary: #4dabf7;
+  --success: #51cf66;
+  --danger: #ff6b6b;
+
+  --chart-solved: #51cf66;
+  --chart-unsolved: #ff6b6b;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.card {
+  background-color: var(--bg-card);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+.table {
+  color: var(--text);
+}
+
+.table thead {
+  color: var(--text);
+}
+
+.modal-content {
+  background-color: var(--bg-card);
+  color: var(--text);
+}
+
+.navbar {
+  background-color: var(--bg-card) !important;
+}

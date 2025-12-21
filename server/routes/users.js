@@ -8,3 +8,5 @@ export const userRouter = express.Router();
 userRouter.patch("/:id", authMiddleware, userController.update)
 
 userRouter.delete("/:id", authMiddleware, userController.remove)
+
+userRouter.get("/:id", userController.findById);
