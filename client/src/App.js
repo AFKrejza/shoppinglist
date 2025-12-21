@@ -1,13 +1,15 @@
 import "./App.css";
 import { useState, useEffect } from "react";
-import { Card, Row, Col, Modal, Button, Form, Navbar, Container, Table } from "react-bootstrap";
+import { Card, Row, Col, Modal, Button, Form, Navbar, Table } from "react-bootstrap";
 import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer} from "recharts";
+import "./i18n.js";
+import {useTranslation} from "react-i18next";
 
-// TODO: comment out either one for real or mock data.
-// import { api } from "./api";
 import { api } from "./api";
 
 function App() {
+
+	const {t, i18n} = useTranslation();
 
 	const [activeUser, setActiveUser] = useState(null);
 	const [activeShoppingList, setActiveShoppingList] = useState();
@@ -121,15 +123,15 @@ function App() {
     <>
       <h4>{shoppingList.name}</h4>
 	<Button variant="primary" size="sm" onClick={() => setShowAddItemModal(true)}>
-	+ Add Item
+	+ {t("addItem")}
 	</Button>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Unit</th>
-            <th>Status</th>
+            <th>{t("item")}</th>
+            <th>{t("quantity")}</th>
+            <th>{t("unit")}</th>
+            <th>{t("status")}</th>
             <th></th>
           </tr>
         </thead>
@@ -137,7 +139,7 @@ function App() {
           {shoppingList.itemList.length === 0 && (
             <tr>
               <td colSpan="5" className="text-center text-muted">
-                No items yet
+                {t("noItems")}
               </td>
             </tr>
           )}
@@ -160,7 +162,7 @@ function App() {
                   size="sm"
                   onClick={() => handleRemoveItem(item._id)}
                 >
-                  Remove
+                  {t("remove")}
                 </Button>
               </td>
             </tr>
@@ -169,7 +171,7 @@ function App() {
       </Table>
 		{shoppingList.itemList.length > 0 && (
 	<Card className="mb-3 p-3">
-		<h6 className="text-center">List Progress</h6>
+		<h6 className="text-center">{t("listProgress")}</h6>
 		<ResponsiveContainer width="100%" height={250}>
 		<PieChart>
 			<Pie
@@ -202,26 +204,26 @@ function App() {
 		</ResponsiveContainer>
 
 		<div className="text-center mt-2">
-		<strong>{solvedCount}</strong> solved /{" "}
-		<strong>{unsolvedCount}</strong> unsolved
+		<strong>{solvedCount}</strong> {t("solved")} /{" "}
+		<strong>{unsolvedCount}</strong> {t("unsolved")}
 		</div>
 	</Card>
 	)}
 
-		  <h5>Members</h5>
+		  <h5>{t("members")}</h5>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Remove</th>
+            <th>{t("name")}</th>
+            <th>{t("email")}</th>
+            <th>{t("remove")}</th>
           </tr>
         </thead>
         <tbody>
           {members.length === 0 && (
             <tr>
               <td colSpan="3" className="text-center text-muted">
-                No members
+                {t("noMembers")}
               </td>
             </tr>
           )}
@@ -236,7 +238,7 @@ function App() {
                   onClick={() => handleRemoveMember(member.id)}
                   disabled={activeUser._id !== shoppingList.ownerId && activeUser._id !== member._id}
                 >
-                  Remove
+                  {t("remove")}
                 </Button>
               </td>
             </tr>
@@ -281,10 +283,10 @@ function App() {
 						<Card.Body>
 							<Card.Title>{list.name}</Card.Title>
 							<Card.Subtitle className="text-center">
-								{list.itemList.length} items
+								{list.itemList.length} {t("items")}
 							</Card.Subtitle>
 							<div>
-								<strong>Members:</strong> {list.memberList.length}
+								<strong>{t("members")}:</strong> {list.memberList.length}
 							</div>
 						</Card.Body>
 					</Card>
@@ -303,7 +305,7 @@ function CreateList({ onClick }) {
 			onClick={onClick}
 			>
 				<Card.Body>
-					<h4>+ New List</h4>
+					<h4>+ {t("newList")}</h4>
 				</Card.Body>
 			</Card>
 		</Col>
@@ -319,16 +321,16 @@ function LoginForm({ onSubmit }) {
 			onSubmit(e, email, password);
 		}}>
 			<Form.Group className= "mb-3" controlId="formBasicEmail">
-				<Form.Label>Email address</Form.Label>
+				<Form.Label>{t("email")}</Form.Label>
 				<Form.Control type="email" placeholder="Enter email" />
 			</Form.Group>
 			<Form.Group className="mb-3"
 			controlId="formBasicPassword">
-				<Form.Label>Password</Form.Label>
+				<Form.Label>{t("password")}</Form.Label>
 				<Form.Control type="password" placeholder="Password" />
 			</Form.Group>
 			<Button variant="primary" type="submit">
-				Log in
+				{t("login")}
 			</Button>
 		</Form>
 	)
@@ -338,20 +340,20 @@ function RegisterForm({ onSubmit }) {
 	return (
 		<Form onSubmit={onSubmit}>
 			<Form.Group className= "mb-3" controlId="formBasicEmail">
-				<Form.Label>Email address</Form.Label>
+				<Form.Label>{t("email")}</Form.Label>
 				<Form.Control type="email" placeholder="Enter email" />
 			</Form.Group>
 			<Form.Group className= "mb-3" controlId="formBasicName">
-				<Form.Label>User Name</Form.Label>
+				<Form.Label>{t("name")}</Form.Label>
 				<Form.Control type="name" placeholder="Enter user name" />
 			</Form.Group>
 			<Form.Group className="mb-3"
 			controlId="formBasicPassword">
-				<Form.Label>Password</Form.Label>
+				<Form.Label>{t("password")}</Form.Label>
 				<Form.Control type="password" placeholder="Password" />
 			</Form.Group>
 			<Button variant="primary" type="submit">
-				Log in
+				{t("login")}
 			</Button>
 		</Form>
 	)
@@ -420,13 +422,24 @@ function RegisterForm({ onSubmit }) {
 				>
 				{theme === "light" ? "dark" : "light"}
 			</Button>
+				<Button
+					variant="outline-secondary"
+					className="me-2"
+					onClick={() => {
+						const next = i18n.language === "en" ? "cs" : "en";
+						i18n.changeLanguage(next);
+						localStorage.setItem("lang", next);
+					}}
+					>
+					{i18n.language === "en" ? "🇨🇿 Česky" : "🇬🇧 English"}
+				</Button>
   			{!activeUser && (
 				<>
 					<Button variant="outline-primary" onClick={openLogin} className="me-2">
-						Login
+						{t("login")}
 					</Button>
 					<Button variant="primary" onClick={openRegister}>
-						Sign Up
+						{t("register")}
 					</Button>
 
 				</>
@@ -439,7 +452,7 @@ function RegisterForm({ onSubmit }) {
 					setActiveShoppingList(null);
 					localStorage.removeItem("jwt");
 				}}>
-				Log Out
+				{t("logout")}
 				</Button>
 			)}
 		</Navbar>
@@ -447,7 +460,7 @@ function RegisterForm({ onSubmit }) {
       <div>
         {activeUser && (
 			<div>
-			<button onClick={() => setShowArchived(!showArchived)}>Toggle Archived</button>
+			<button onClick={() => setShowArchived(!showArchived)}>{t("toggleArchived")}</button>
 		  </div>
         )}
       </div>
@@ -489,12 +502,12 @@ function RegisterForm({ onSubmit }) {
 
 	<Modal show={showCreateModal} onHide={() => setShowCreateModal(false)}>
 		<Modal.Header closeButton>
-			<Modal.Title>Create New Shopping List</Modal.Title>
+			<Modal.Title>{t("newList")}</Modal.Title>
 		</Modal.Header>
 		<Modal.Body>
 			<Form>
 				<Form.Group>
-					<Form.Label>List Name</Form.Label>
+					<Form.Label>{t("listName")}</Form.Label>
 					<Form.Control
 					type="text"
 					placeholder="Enter list name"
@@ -506,7 +519,7 @@ function RegisterForm({ onSubmit }) {
 		</Modal.Body>
 		<Modal.Footer>
 			<Button variant="secondary" onClick={() => setShowCreateModal(false)}>
-				Cancel
+				{t("cancel")}
 			</Button>
 			<Button
 				variant="primary"
@@ -530,7 +543,7 @@ function RegisterForm({ onSubmit }) {
 					}
 				}}
 				>
-				Create
+				{t("create")}
 			</Button>
 		</Modal.Footer>
 	</Modal>
@@ -551,12 +564,12 @@ function RegisterForm({ onSubmit }) {
 </Modal>
 <Modal show={showAddItemModal} onHide={() => setShowAddItemModal(false)}>
   <Modal.Header closeButton>
-    <Modal.Title>Add Item</Modal.Title>
+    <Modal.Title>{t("addItem")}</Modal.Title>
   </Modal.Header>
   <Modal.Body>
     <Form>
       <Form.Group className="mb-3">
-        <Form.Label>Item Name</Form.Label>
+        <Form.Label>{t("itemName")}</Form.Label>
         <Form.Control
           type="text"
           value={newItemName}
@@ -565,7 +578,7 @@ function RegisterForm({ onSubmit }) {
         />
       </Form.Group>
       <Form.Group className="mb-3">
-        <Form.Label>Quantity</Form.Label>
+        <Form.Label>{t("quantity")}</Form.Label>
         <Form.Control
           type="number"
           value={newItemQty}
@@ -574,7 +587,7 @@ function RegisterForm({ onSubmit }) {
         />
       </Form.Group>
       <Form.Group className="mb-3">
-        <Form.Label>Unit</Form.Label>
+        <Form.Label>{t("unit")}</Form.Label>
         <Form.Control
           type="text"
           value={newItemUnit}
@@ -586,7 +599,7 @@ function RegisterForm({ onSubmit }) {
   </Modal.Body>
   <Modal.Footer>
     <Button variant="secondary" onClick={() => setShowAddItemModal(false)}>
-      Cancel
+      {t("cancel")}
     </Button>
     <Button
       variant="primary"
@@ -618,7 +631,7 @@ function RegisterForm({ onSubmit }) {
         }
       }}
     >
-      Add Item
+      {t("addItem")}
     </Button>
   </Modal.Footer>
 </Modal>

@@ -1,7 +1,7 @@
 const SERVER_URL = `http://localhost:3000`;
 const listsUrl = `${SERVER_URL}/shoppinglists`;
 const authUrl = `${SERVER_URL}/auth`;
-const usersUrl = `${SERVER_URL}/users`;
+// const usersUrl = `${SERVER_URL}/users`;
 
 export const api = {
 
