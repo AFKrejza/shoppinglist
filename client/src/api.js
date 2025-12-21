@@ -1,7 +1,7 @@
 const SERVER_URL = `http://localhost:3000`;
 const listsUrl = `${SERVER_URL}/shoppinglists`;
 const authUrl = `${SERVER_URL}/auth`;
-// const usersUrl = `${SERVER_URL}/users`;
+const usersUrl = `${SERVER_URL}/users`;
 
 export const api = {
 
@@ -44,6 +44,24 @@ export const api = {
 	
 			return res.json();
 		},
+	},
+
+	users: {
+		async findById(jwt, id) {
+			console.log(`ID: ${id}`);
+			const res = await fetch(`${usersUrl}/${id}`, {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					"Authorization": `Bearer ${jwt}`
+				}
+			});
+
+			if (!res.ok)
+				throw new Error(`Failed to fetch user ${id}`);
+
+			return res.json();
+		}
 	},
 
 	lists: {
@@ -124,13 +142,13 @@ export const api = {
 
 			// this is stupid but it just needs to work. Messed up the status codes
 			 if (res.status === 200 || res.status === 201) {
-			try {
-				return await res.json();
-			} catch {
-				return null;
+				try {
+					return await res.json();
+				} catch {
+					return null;
+				}
 			}
-		}
-  return null;
+  			return null;
 		},
 
 		async removeMember(jwt, listId, memberId) {

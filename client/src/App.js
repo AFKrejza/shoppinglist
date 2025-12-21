@@ -17,7 +17,8 @@ function App() {
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [newListName, setNewListName] = useState("");
 	const [showArchived, setShowArchived] = useState(false);
-	const [userList, setUserList] = useState([]); // for displaying member names
+	// const [userList, setUserList] = useState([]); // for displaying member names
+	const [members, setMembers] = useState([]);
 
 	const [showAuthModal, setShowAuthModal] = useState(false);
 	const [authMode, setAuthMode] = useState("login");
@@ -27,6 +28,9 @@ function App() {
 	const [newItemName, setNewItemName] = useState("");
 	const [newItemQty, setNewItemQty] = useState(1);
 	const [newItemUnit, setNewItemUnit] = useState("");
+
+	const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+	const [newMemberId, setNewMemberId] = useState("");
 
 	const [theme, setTheme] = useState(
 		localStorage.getItem("theme") || "light"
@@ -46,222 +50,56 @@ function App() {
 	}
 	}, []);
 
-  function DisplayShoppingList({ shoppingList, activeUser }) {
+	useEffect(() => {
+		if (!activeShoppingList || !jwt)
+		{
+			setMembers([]);
+			return;
+		}
+		console.log("Fetching members for:", activeShoppingList.memberList);
 
-	const handleRemoveItem = async (itemId) => {
-		try {
-			const res = await api.lists.removeItem(jwt, shoppingList._id, itemId)
-			console.log(itemId);
-			const updatedList = res || {
-				...shoppingList,
-				itemList: shoppingList.itemList.filter(item => item._id !== itemId)
+
+		const fetchMembers = async () => {
+			try {
+				const membersData = await Promise.all(
+					// activeShoppingList.memberList.forEach(id => console.log("Fetching user ID:", id)),
+					activeShoppingList.memberList.map(async (id) => {
+						console.log("Member ID: "+ id);
+						try {
+							return await api.users.findById(jwt, id);
+						} catch (error) {
+							console.warn(`Failed to get user ${id}`);
+							return null;
+						}
+					}
+				));
+				setMembers(membersData.filter(Boolean));
+				console.log("Members: ")
+				console.log(membersData);
+			} catch (err) {
+				console.error("Failed to load members", err);
 			}
-			setActiveShoppingList(updatedList);
-			setAllLists(prev =>
-			prev.map(list => list._id === shoppingList._id ? updatedList : list)
-			);
-		} catch (err) {
-			console.error(err);
-			alert("Failed to remove item");
-		}
-	};
+		};
 
-	const handleToggleItem = async (itemId) => {
-		try {
-			const updatedList = await api.lists.updateItem(jwt, shoppingList._id, {
-				itemList: shoppingList.itemList.map(item =>
-				item._id === itemId ? { ...item, ticked: !item.ticked } : item
-			)
-			});
+		fetchMembers();
+	}, [activeShoppingList, jwt]);
 
-			setActiveShoppingList(updatedList);
-			setAllLists(prev =>
-			prev.map(list => list._id === shoppingList._id ? updatedList : list)
-			);
-		} catch (err) {
-			console.error(err);
-			alert("Failed to update item status");
-		}
-	};
+
+
   
-
-  	// owner or member themselves
-	const handleRemoveMember = async (memberId) => {
-		if (activeUser.id !== shoppingList.ownerId && activeUser.id !== memberId) return;
-
-		try {
-			const updatedList = await api.lists.removeMember(jwt, shoppingList.id, memberId);
-
-			setActiveShoppingList(updatedList);
-			setAllLists(prev =>
-			prev.map(list => list.id === shoppingList.id ? updatedList : list)
-			);
-		} catch (err) {
-			console.error(err);
-			alert("Failed to remove member");
-		}
-	};
-
-  // id to user objects for the bottom table
-  const members = shoppingList.memberList
-    .map(id => userList.find(u => u._id === id))
-    .filter(Boolean);
-
-	const solvedCount = shoppingList.itemList.filter(item => item.ticked).length;
-	const unsolvedCount = shoppingList.itemList.length - solvedCount;
-
-	const pieData = [
-		{ name: "Solved", value: solvedCount },
-		{name: "Unsolved", value: unsolvedCount}
-	];
-	const COLORS = [
-		"var(--chart-solved)",
-		"var(--chart-unsolved)"
-	];
-
-  return (
-    <>
-      <h4>{shoppingList.name}</h4>
-	<Button variant="primary" size="sm" onClick={() => setShowAddItemModal(true)}>
-	+ {t("addItem")}
-	</Button>
-      <Table striped bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>{t("item")}</th>
-            <th>{t("quantity")}</th>
-            <th>{t("unit")}</th>
-            <th>{t("status")}</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {shoppingList.itemList.length === 0 && (
-            <tr>
-              <td colSpan="5" className="text-center text-muted">
-                {t("noItems")}
-              </td>
-            </tr>
-          )}
-
-          {shoppingList.itemList.map(item => (
-            <tr key={item._id}>
-              <td>{item.name}</td>
-              <td>{item.quantity}</td>
-              <td>{item.unit}</td>
-              <td className="text-center">
-				<Form.Check
-					type="checkbox"
-					checked={item.ticked}
-					onChange={() => handleToggleItem(item._id)}
-				/>
-				</td>
-              <td>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleRemoveItem(item._id)}
-                >
-                  {t("remove")}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-		{shoppingList.itemList.length > 0 && (
-	<Card className="mb-3 p-3">
-		<h6 className="text-center">{t("listProgress")}</h6>
-		<ResponsiveContainer width="100%" height={250}>
-		<PieChart>
-			<Pie
-			data={pieData}
-			cx="50%"
-			cy="50%"
-			innerRadius={60}
-			outerRadius={90}
-			paddingAngle={5}
-			dataKey="value"
-			label
-			>
-			{pieData.map((entry, index) => (
-				<Cell
-				key={`cell-${index}`}
-				fill={COLORS[index % COLORS.length]}
-				/>
-			))}
-			</Pie>
-			<Tooltip
-				contentStyle={{
-					backgroundColor: "var(--bg-card)",
-					borderColor: "var(--border)",
-					color: "var(--text)"
-				}}
-			/>
-
-			<Legend />
-		</PieChart>
-		</ResponsiveContainer>
-
-		<div className="text-center mt-2">
-		<strong>{solvedCount}</strong> {t("solved")} /{" "}
-		<strong>{unsolvedCount}</strong> {t("unsolved")}
-		</div>
-	</Card>
-	)}
-
-		  <h5>{t("members")}</h5>
-      <Table striped bordered hover size="sm">
-        <thead>
-          <tr>
-            <th>{t("name")}</th>
-            <th>{t("email")}</th>
-            <th>{t("remove")}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {members.length === 0 && (
-            <tr>
-              <td colSpan="3" className="text-center text-muted">
-                {t("noMembers")}
-              </td>
-            </tr>
-          )}
-          {members.map(member => (
-            <tr key={member.id}>
-              <td>{member.name}</td>
-              <td>{member.email}</td>
-              <td>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleRemoveMember(member.id)}
-                  disabled={activeUser._id !== shoppingList.ownerId && activeUser._id !== member._id}
-                >
-                  {t("remove")}
-                </Button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
-
-    </>
-  );
-}
 
   function ShoppingListTiles({ shoppingLists, onSelect, onCreate, onDelete, onArchiveToggle }) {
 	return (
 		<Row xs={1} sm={2} md={3} lg={4} className="g-4 p-3">
 			<CreateList onClick={onCreate} />
 			{shoppingLists.map(list => (
-				<Col key={list.id}>
+				<Col key={list._id}>
 					<Card
 						onClick={() => onSelect(list)}
 						style={{ cursor: "pointer" }}
 						className="h-100 shadow-sm"
 						>
-							{activeUser.id === list.ownerId && (
+							{activeUser._id === list.ownerId && (
 								<div className="position-absolute bottom-0 end-0 m-2 d-flex gap-2">
 								<Button
 									variant="danger"
@@ -472,31 +310,39 @@ function RegisterForm({ onSubmit }) {
 	}
 		onSelect={(list) => {
 			setActiveShoppingList(list);
-			console.log("shopping list id:", list.id);
+			console.log("shopping list id:", list._id);
 		}}
 		onCreate={() => setShowCreateModal(true)}
 		onDelete={(list) => {
 			const updated = activeAllLists.filter(
-				(l) => l.id !== list.id
+				(l) => l._id !== list._id
 			);
 			setAllLists(updated);
-			if (activeShoppingList?.id === list.id) {
+			if (activeShoppingList?._id === list._id) {
 				setActiveShoppingList(null);
 			}}
 		}
 			onArchiveToggle={(list) => {
 				const updated = activeAllLists.map((l) => 
-					l.id === list.id ? {...l, isArchived: !l.isArchived } : l
+					l._id === list._id ? {...l, isArchived: !l.isArchived } : l
 				);
 				setAllLists(updated);
-				if (activeShoppingList?.id === list.id) {
+				if (activeShoppingList?._id === list._id) {
 					setActiveShoppingList({...list, isArchived: !list.isArchived});
 				}
 			}}
 	  />}</div>
       <div>
         {activeShoppingList && activeUser && (
-          <DisplayShoppingList shoppingList={activeShoppingList} />
+          <DisplayShoppingList 
+			shoppingList={activeShoppingList} 
+			activeUser={activeUser} 
+			jwt={jwt}
+			setActiveShoppingList={setActiveShoppingList}
+			setAllLists={setAllLists}
+			setShowAddItemModal={setShowAddItemModal}
+			members={members}
+		  />
         )}
       </div>
 
@@ -635,7 +481,305 @@ function RegisterForm({ onSubmit }) {
     </Button>
   </Modal.Footer>
 </Modal>
+	  <Button variant="primary" size="sm" onClick={() => setShowAddMemberModal(true)}>
+  + {t("addMember")}
+</Button>
+
+<Modal show={showAddMemberModal} onHide={() => setShowAddMemberModal(false)}>
+  <Modal.Header closeButton>
+    <Modal.Title>{t("addMember")}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    <Form.Group>
+      <Form.Label>{t("memberId")}</Form.Label>
+      <Form.Control
+        type="text"
+        value={newMemberId}
+        onChange={(e) => setNewMemberId(e.target.value)}
+        placeholder="Paste member ID"
+      />
+    </Form.Group>
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={() => setShowAddMemberModal(false)}>
+      {t("cancel")}
+    </Button>
+    <Button
+      variant="primary"
+      onClick={async () => {
+        if (!newMemberId.trim()) return;
+
+        try {
+        	const updatedList = await api.lists.updateShoppingList(jwt, activeShoppingList._id, {
+        		memberList: [...activeShoppingList.memberList, newMemberId.trim()]
+        	});
+
+        	setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+				prev.map(list => list._id === updatedList._id ? updatedList : list)
+			);
+
+        // refreshed members, i think it breaks stuff
+        //   const membersData = await Promise.all(
+        //     updatedList.memberList.map(id => api.users.findById(id))
+        //   );
+        //   setMembers(membersData);
+
+          setNewMemberId("");
+          setShowAddMemberModal(false);
+        } catch (err) {
+          console.error(err);
+          alert("Failed to add member");
+        }
+      }}
+    >
+      {t("addMember")}
+    </Button>
+  </Modal.Footer>
+</Modal>
+
     </div>
+  );
+}
+
+function DisplayShoppingList({ shoppingList, activeUser, jwt, setActiveShoppingList, setAllLists, setShowAddItemModal, members }) {
+
+	const {t, i18n} = useTranslation();
+
+	// const [members, setMembers] = useState([]);
+	console.log("memberList:", shoppingList.memberList);
+
+
+	// useEffect(() => {
+	// 	if (!shoppingList?.memberList?.length || !jwt)
+	// 	{
+	// 		setMembers([]);
+	// 		return;
+	// 	}
+
+	// 	const fetchMembers = async () => {
+	// 	try {
+	// 		const membersData = await Promise.all(
+	// 		shoppingList.memberList.map(async (id) => {
+	// 			try {
+	// 				return await api.users.findById(jwt, id);
+	// 			} catch (error) {
+	// 				console.warn(`Failed to fetch user ${id}`, error);
+	// 			}
+	// 		})
+	// 		);
+	// 		setMembers(membersData.filter(Boolean));
+	// 	} catch (err) {
+	// 		console.error("Failed to load members", err);
+	// 	}
+    // };
+
+	// fetchMembers();
+	// }, [shoppingList, jwt]);
+
+
+	const handleRemoveItem = async (itemId) => {
+		try {
+			const res = await api.lists.removeItem(jwt, shoppingList._id, itemId)
+			console.log(itemId);
+			const updatedList = res || {
+				...shoppingList,
+				itemList: shoppingList.itemList.filter(item => item._id !== itemId)
+			}
+			setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+			prev.map(list => list._id === shoppingList._id ? updatedList : list)
+			);
+		} catch (err) {
+			console.error(err);
+			alert("Failed to remove item");
+		}
+	};
+
+	const handleToggleItem = async (itemId) => {
+		try {
+			const updatedList = await api.lists.updateItem(jwt, shoppingList._id, {
+				itemList: shoppingList.itemList.map(item =>
+				item._id === itemId ? { ...item, ticked: !item.ticked } : item
+			)
+			});
+
+			setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+			prev.map(list => list._id === shoppingList._id ? updatedList : list)
+			);
+		} catch (err) {
+			console.error(err);
+			alert("Failed to update item status");
+		}
+	};
+  
+
+  	// owner or member themselves
+	const handleRemoveMember = async (memberId) => {
+		if (activeUser._id !== shoppingList.ownerId && activeUser._id !== memberId) return;
+
+		try {
+			const updatedList = await api.lists.removeMember(jwt, shoppingList._id, memberId);
+
+			setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+			prev.map(list => list._id === shoppingList._id ? updatedList : list)
+			);
+		} catch (err) {
+			console.error(err);
+			alert("Failed to remove member");
+		}
+	};
+
+  // id to user objects for the bottom table
+//   const members = shoppingList.memberList
+//     .map(id => userList.find(u => u._id === id))
+//     .filter(Boolean);
+
+	const solvedCount = shoppingList.itemList.filter(item => item.ticked).length;
+	const unsolvedCount = shoppingList.itemList.length - solvedCount;
+
+	const pieData = [
+		{ name: "Solved", value: solvedCount },
+		{name: "Unsolved", value: unsolvedCount}
+	];
+	const COLORS = [
+		"var(--chart-solved)",
+		"var(--chart-unsolved)"
+	];
+
+	
+
+  return (
+    <>
+      <h4>{shoppingList.name}</h4>
+	<Button variant="primary" size="sm" onClick={() => setShowAddItemModal(true)}>
+	+ {t("addItem")}
+	</Button>
+      <Table striped bordered hover size="sm">
+        <thead>
+          <tr>
+            <th>{t("item")}</th>
+            <th>{t("quantity")}</th>
+            <th>{t("unit")}</th>
+            <th>{t("status")}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {shoppingList.itemList.length === 0 && (
+            <tr>
+              <td colSpan="5" className="text-center text-muted">
+                {t("noItems")}
+              </td>
+            </tr>
+          )}
+
+          {shoppingList.itemList.map(item => (
+            <tr key={item._id}>
+              <td>{item.name}</td>
+              <td>{item.quantity}</td>
+              <td>{item.unit}</td>
+              <td className="text-center">
+				<Form.Check
+					type="checkbox"
+					checked={item.ticked}
+					onChange={() => handleToggleItem(item._id)}
+				/>
+				</td>
+              <td>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleRemoveItem(item._id)}
+                >
+                  {t("remove")}
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+		{shoppingList.itemList.length > 0 && (
+	<Card className="mb-3 p-3">
+		<h6 className="text-center">{t("listProgress")}</h6>
+		<ResponsiveContainer width="100%" height={250}>
+		<PieChart>
+			<Pie
+			data={pieData}
+			cx="50%"
+			cy="50%"
+			innerRadius={60}
+			outerRadius={90}
+			paddingAngle={5}
+			dataKey="value"
+			label
+			>
+			{pieData.map((entry, index) => (
+				<Cell
+				key={`cell-${index}`}
+				fill={COLORS[index % COLORS.length]}
+				/>
+			))}
+			</Pie>
+			<Tooltip
+				contentStyle={{
+					backgroundColor: "var(--bg-card)",
+					borderColor: "var(--border)",
+					color: "var(--text)"
+				}}
+			/>
+
+			<Legend />
+		</PieChart>
+		</ResponsiveContainer>
+
+		<div className="text-center mt-2">
+		<strong>{solvedCount}</strong> {t("solved")} /{" "}
+		<strong>{unsolvedCount}</strong> {t("unsolved")}
+		</div>
+	</Card>
+	)}
+
+
+		<h5>{t("members")}</h5>
+      <Table striped bordered hover size="sm">
+        <thead>
+          <tr>
+			<th>{t("id")}</th>
+            <th>{t("email")}</th>
+            <th>{t("remove")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {members.length === 0 && (
+            <tr>
+              <td colSpan="3" className="text-center text-muted">
+                {t("noMembers")}
+              </td>
+            </tr>
+          )}
+          {members.map(member => (
+            <tr key={member._id}>
+				<td>{member._id}</td>
+              <td>{member.email}</td>
+              <td>
+                <Button
+                  variant="outline-danger"
+                  size="sm"
+                  onClick={() => handleRemoveMember(member._id)}
+                  disabled={activeUser._id !== shoppingList.ownerId && activeUser._id !== member._id}
+                >
+                  {t("remove")}
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+
+    </>
   );
 }
 

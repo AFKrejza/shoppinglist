@@ -28,6 +28,18 @@ export const userController = {
 			res.status(500).json({ error: error.message });
 		}
 
-	}
+	},
 
+	async findById(req, res) {
+		try {
+			const userId = req.params.id;
+			const user = await userService.findById(userId);
+			console.log(`User ${user.email} found`);
+			console.log(user.userName);
+			return res.status(200).json(user);
+		} catch (error) {
+			console.log(error);
+			res.status(500).json({ error: error.message });
+		}
+	}
 };

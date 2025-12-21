@@ -8,7 +8,7 @@ export const userService = {
 
 	async findById(userId) {
 		const user = await userDao.findById(userId);
-		console.log(user);
+		// console.log(user);
 		return user;
 	},
 
