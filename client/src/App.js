@@ -342,6 +342,7 @@ function RegisterForm({ onSubmit }) {
 			setAllLists={setAllLists}
 			setShowAddItemModal={setShowAddItemModal}
 			members={members}
+			setShowAddMemberModal={setShowAddMemberModal}
 		  />
         )}
       </div>
@@ -481,9 +482,9 @@ function RegisterForm({ onSubmit }) {
     </Button>
   </Modal.Footer>
 </Modal>
-	  <Button variant="primary" size="sm" onClick={() => setShowAddMemberModal(true)}>
+	  {/* <Button variant="primary" size="sm" onClick={() => setShowAddMemberModal(true)}>
   + {t("addMember")}
-</Button>
+</Button> */}
 
 <Modal show={showAddMemberModal} onHide={() => setShowAddMemberModal(false)}>
   <Modal.Header closeButton>
@@ -542,7 +543,7 @@ function RegisterForm({ onSubmit }) {
   );
 }
 
-function DisplayShoppingList({ shoppingList, activeUser, jwt, setActiveShoppingList, setAllLists, setShowAddItemModal, members }) {
+function DisplayShoppingList({ shoppingList, activeUser, jwt, setActiveShoppingList, setAllLists, setShowAddItemModal, members, setShowAddMemberModal }) {
 
 	const {t, i18n} = useTranslation();
 
@@ -744,6 +745,9 @@ function DisplayShoppingList({ shoppingList, activeUser, jwt, setActiveShoppingL
 
 
 		<h5>{t("members")}</h5>
+		<Button variant="primary" size="sm" onClick={() => setShowAddMemberModal(true)}>
+			+ {t("addMember")}
+		</Button>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
