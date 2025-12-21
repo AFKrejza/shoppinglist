@@ -1,6 +1,7 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 import { Card, Row, Col, Modal, Button, Form, Navbar, Container, Table } from "react-bootstrap";
+import {PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer} from "recharts";
 
 // TODO: comment out either one for real or mock data.
 // import { api } from "./api";
@@ -8,17 +9,17 @@ import { api } from "./api";
 
 function App() {
 
-  const [activeUser, setActiveUser] = useState(null);
-  const [activeShoppingList, setActiveShoppingList] = useState();
-  const [activeAllLists, setAllLists] = useState([]); // should only contain lists the user is allowed to view (backend: getPage)
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [newListName, setNewListName] = useState("");
-  const [showArchived, setShowArchived] = useState(false);
-  const [userList, setUserList] = useState([]); // for displaying member names
+	const [activeUser, setActiveUser] = useState(null);
+	const [activeShoppingList, setActiveShoppingList] = useState();
+	const [activeAllLists, setAllLists] = useState([]); // should only contain lists the user is allowed to view (backend: getPage)
+	const [showCreateModal, setShowCreateModal] = useState(false);
+	const [newListName, setNewListName] = useState("");
+	const [showArchived, setShowArchived] = useState(false);
+	const [userList, setUserList] = useState([]); // for displaying member names
 
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [authMode, setAuthMode] = useState("login");
-  const [jwt, setJwt] = useState(null);
+	const [showAuthModal, setShowAuthModal] = useState(false);
+	const [authMode, setAuthMode] = useState("login");
+	const [jwt, setJwt] = useState(null);
 
 	const [showAddItemModal, setShowAddItemModal] = useState(false);
 	const [newItemName, setNewItemName] = useState("");
@@ -26,14 +27,14 @@ function App() {
 	const [newItemUnit, setNewItemUnit] = useState("");
 
 
-useEffect(() => {
-  const storedJwt = localStorage.getItem("jwt");
-  if (storedJwt) {
-    setJwt(storedJwt);
-    loadUserProfile(storedJwt).catch(() => {});
-    loadShoppingLists(storedJwt).catch(() => {});
-  }
-}, []);
+	useEffect(() => {
+	const storedJwt = localStorage.getItem("jwt");
+	if (storedJwt) {
+		setJwt(storedJwt);
+		loadUserProfile(storedJwt).catch(() => {});
+		loadShoppingLists(storedJwt).catch(() => {});
+	}
+	}, []);
 
   function DisplayShoppingList({ shoppingList, activeUser }) {
 
@@ -56,22 +57,22 @@ useEffect(() => {
 	};
 
 	const handleToggleItem = async (itemId) => {
-  try {
-    const updatedList = await api.lists.updateItem(jwt, shoppingList._id, {
-      itemList: shoppingList.itemList.map(item =>
-        item._id === itemId ? { ...item, ticked: !item.ticked } : item
-      )
-    });
+		try {
+			const updatedList = await api.lists.updateItem(jwt, shoppingList._id, {
+				itemList: shoppingList.itemList.map(item =>
+				item._id === itemId ? { ...item, ticked: !item.ticked } : item
+			)
+			});
 
-    setActiveShoppingList(updatedList);
-    setAllLists(prev =>
-      prev.map(list => list._id === shoppingList._id ? updatedList : list)
-    );
-  } catch (err) {
-    console.error(err);
-    alert("Failed to update item status");
-  }
-};
+			setActiveShoppingList(updatedList);
+			setAllLists(prev =>
+			prev.map(list => list._id === shoppingList._id ? updatedList : list)
+			);
+		} catch (err) {
+			console.error(err);
+			alert("Failed to update item status");
+		}
+	};
   
 
   	// owner or member themselves
@@ -96,12 +97,21 @@ useEffect(() => {
     .map(id => userList.find(u => u._id === id))
     .filter(Boolean);
 
+	const solvedCount = shoppingList.itemList.filter(item => item.ticked).length;
+	const unsolvedCount = shoppingList.itemList.length - solvedCount;
+
+	const pieData = [
+		{ name: "Solved", value: solvedCount },
+		{name: "Unsolved", value: unsolvedCount}
+	];
+	const COLORS = ["#00ff00", "#ff0000"];
+
   return (
     <>
       <h4>{shoppingList.name}</h4>
-<Button variant="primary" size="sm" onClick={() => setShowAddItemModal(true)}>
-  + Add Item
-</Button>
+	<Button variant="primary" size="sm" onClick={() => setShowAddItemModal(true)}>
+	+ Add Item
+	</Button>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
@@ -146,6 +156,39 @@ useEffect(() => {
           ))}
         </tbody>
       </Table>
+		{shoppingList.itemList.length > 0 && (
+	<Card className="mb-3 p-3">
+		<h6 className="text-center">List Progress</h6>
+		<ResponsiveContainer width="100%" height={250}>
+		<PieChart>
+			<Pie
+			data={pieData}
+			cx="50%"
+			cy="50%"
+			innerRadius={60}
+			outerRadius={90}
+			paddingAngle={5}
+			dataKey="value"
+			label
+			>
+			{pieData.map((entry, index) => (
+				<Cell
+				key={`cell-${index}`}
+				fill={COLORS[index % COLORS.length]}
+				/>
+			))}
+			</Pie>
+			<Tooltip />
+			<Legend />
+		</PieChart>
+		</ResponsiveContainer>
+
+		<div className="text-center mt-2">
+		<strong>{solvedCount}</strong> solved /{" "}
+		<strong>{unsolvedCount}</strong> unsolved
+		</div>
+	</Card>
+	)}
 
 		  <h5>Members</h5>
       <Table striped bordered hover size="sm">
@@ -395,7 +438,6 @@ function RegisterForm({ onSubmit }) {
         {activeUser && (
 			<div>
 			<button onClick={() => setShowArchived(!showArchived)}>Toggle Archived</button>
-        	<button onClick={() => setActiveUser(null)}>Log out</button>
 		  </div>
         )}
       </div>
