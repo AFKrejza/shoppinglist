@@ -1,0 +1,12 @@
+Project Description
+
+Conceptual Model
+
+Relational Schema
+
+Criteria:
+M:N users <=> lists
+M:N items <=> lists
+
+So I decided to create two junction tables, lists_users and lists_items.
+
