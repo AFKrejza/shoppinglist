@@ -1,6 +1,17 @@
+25W Backend Systems
+Adam Krejza
+
 Project Description
 
+The purpose of this project was to create a shopping list app.
+
 Conceptual Model
+
+There are a total of 5 tables as described below.
+
+I needed 3 main tables: users, lists, and items.
+Additionally, I added 2 junction (join) tables, lists_users and lists_items, since I needed M:N relations.
+For faster lookups, I added an index on the user IDs to the lists_users table and an index on the item IDs to the lists_items table.
 
 Relational Schema
 

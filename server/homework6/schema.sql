@@ -73,8 +73,13 @@ INSERT INTO users (email, user_name, password_hash, role) VALUES
 );
 
 INSERT INTO lists (owner_id, name) VALUES
-(1, 'Groceries'),
-(2, 'Clothes');
+(2, 'Groceries'),
+(3, 'Clothes');
+
+-- note: this only works on a totally new db with serials. Normally I'd do it differently.
+INSERT INTO lists_users (list_id, user_id) VALUES
+(1, 3),
+(2, 2);
 
 INSERT INTO items (name) VALUES
 ('Milk'),
@@ -83,21 +88,43 @@ INSERT INTO items (name) VALUES
 ('Gloves'),
 ('Ski mask');
 
--- note: this only works on a totally new db with serials. Normally I'd do it differently.
-INSERT INTO lists_users (list_id, user_id) VALUES
-(1, 1),
-(2, 2);
-
-INSERT INTO lists_items(list_id, item_id) VALUES
-(1, 1),
-(1, 2),
-(1, 3),
-(2, 4),
-(2, 5);
+INSERT INTO lists_items(list_id, item_id, quantity, unit) VALUES
+(1, 1, 2, 'L'),
+(1, 2, 6, ''),
+(1, 3, 5, 'kg'),
+(2, 4, 1, ''),
+(2, 5, 1, '');
 
 
 
 -- queries
 
--- show unticked items
-SELECT * FROM lists_items WHERE list_id=1;
+-- show items from list 1
+SELECT i.name, li.quantity, li.unit, li.ticked
+FROM lists_items li
+JOIN items i ON i.item_id = li.item_id
+WHERE li.list_id = 1;
+
+-- select all unarchived lists that user 2 is the owner of
+SELECT l.list_id, l.name
+FROM lists l
+WHERE l.owner_id = 2
+AND l.is_archived = FALSE
+ORDER BY l.name;
+
+-- count how many unticked items there are in all the unarchived lists that a given user is in (owner or member)
+-- select all of a user's lists, then in each list, increment for each item
+SELECT COUNT(li.item_id) AS unticked_item_count
+FROM lists_items li
+JOIN lists l ON l.list_id = li.list_id
+WHERE li.ticked = FALSE
+AND l.is_archived = FALSE
+AND (
+	l.owner_id = 2
+	OR EXISTS (
+		SELECT 1
+		FROM lists_users lu
+		WHERE lu.list_id = l.list_id
+		AND lu.user_id = 2
+	)
+);
