@@ -1,23 +1,54 @@
 25W Backend Systems
+Homework 6
 Adam Krejza
 
 Project Description
 
 The purpose of this project was to create a shopping list app.
 
+Passwords would normally be hashed.
+
 Conceptual Model
+
+1:N user lists
+1:1 list owner
+1:N list members
+1:N user lists
+1:N list items
+1:1 item list
+
+Meaning:
+A user can own multiple lists, 
+each list has a single owner, 
+a list can have multiple members, 
+a user can be a member of multiple lists, 
+each list can contain multiple items, 
+and each item belongs to one list. 
+
+
+Relational Schema
 
 There are a total of 5 tables as described below.
 
 I needed 3 main tables: users, lists, and items.
-Additionally, I added 2 junction (join) tables, lists_users and lists_items, since I needed M:N relations.
-For faster lookups, I added an index on the user IDs to the lists_users table and an index on the item IDs to the lists_items table.
+Additionally, I added 2 junction (join) tables, lists_users and lists_items, since they need M:N relations.
 
-Relational Schema
+Tables:
+users (user_id, email, user_name, password_hash, role),
+lists (list_id, owner_id, name, isarchived),
+items (item_id, name),
+lists_users (list_id, user_id),
+lists_items (quantity, unit, ticked, list_id, item_id)
+
+For faster lookups, I added an index on the user IDs to the lists_users table and an index on the item IDs to the lists_items table.
 
 Criteria:
 M:N users <=> lists
 M:N items <=> lists
 
-So I decided to create two junction tables, lists_users and lists_items.
+Physical Model
+Only 2 collections exist, users, and lists.
 
+Each user document stores the username, email, password, and role.
+
+Each list document stores the name, member list array which contains the emails of the members, its archived status, the item list array, and the owner's email. The item list is an embedded document array.
