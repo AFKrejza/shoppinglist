@@ -113,7 +113,6 @@ AND l.is_archived = FALSE
 ORDER BY l.name;
 
 -- count how many unticked items there are in all the unarchived lists that a given user is in (owner or member)
--- select all of a user's lists, then in each list, increment for each item
 SELECT COUNT(li.item_id) AS unticked_item_count
 FROM lists_items li
 JOIN lists l ON l.list_id = li.list_id
